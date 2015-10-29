@@ -1,0 +1,11 @@
+import os
+import numpy as np
+from ggplot import *
+import pandas as pd
+os.getcwd()
+
+filename = os.path.join("file.csv")
+df = pd.read_csv(filename)
+
+df.head()
+
