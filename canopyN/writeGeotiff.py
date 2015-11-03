@@ -12,8 +12,8 @@ import os
 #conda install gdal provides the above libraries.
 #conda install -c https://conda.binstar.org/osgeo gdal
 
-#os.chdir('c:/Users/lwasser/Documents/GitHub/pythonWork/canopyN/')
-os.chdir('/Users/lwasser/Documents/GitHub/pythonWork/canopyN')
+#os.chdir('c:/Users/cflagg/Documents/GitHub/pythonWork/canopyN/')
+os.chdir('/Users/cflagg/Documents/GitHub/pythonWork/canopyN')
 os.getcwd()
 
 
