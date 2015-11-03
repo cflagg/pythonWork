@@ -7,10 +7,10 @@ This code will process NDVI for a series of HDF5 files
 
 import numpy as np
 
-#os.chdir('c:/Users/lwasser/Documents/GitHub/pythonWork/canopyN/')
+#os.chdir('c:/Users/cflagg/Documents/GitHub/pythonWork/canopyN/')
 
 
-#dirPath = (r'c:/Users/lwasser/Documents/GitHub/pythonWork/canopyN/data/h5/')
+#dirPath = (r'c:/Users/cflagg/Documents/GitHub/pythonWork/canopyN/data/h5/')
 
 #get a list of all files in the directory
 #H5files=geth5FileList(dirPath)

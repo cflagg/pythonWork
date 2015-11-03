@@ -16,16 +16,16 @@ import platform
 ########################## DEFINE PATHS #################################
 #########################################################################
 
-#os.chdir('c:/Users/lwasser/Documents/GitHub/pythonWork/canopyN')
+os.chdir('c:/Users/cflagg/Documents/GitHub/pythonWork/canopyN')
 
 #check to see what platform i'm running on
 if platform.system() == 'Windows':
     #set basepath for windows
-    basePath='c:/Users/lwasser/Documents/GitHub/pythonWork/canopyN'
+    basePath='c:/Users/cflagg/Documents/GitHub/pythonWork/canopyN'
     fileDirectory = (r'G:/D17_Data_2014_Distro/02_SJER/SJER_Spectrometer_Data/2013061320/Reflectance/')
 else:
     #path to MAC git repo
-    basePath='/Users/lwasser/Documents/GitHub/pythonWork/canopyN'
+    basePath='/Users/cflagg/Documents/GitHub/pythonWork/canopyN'
     fileDirectory = (r'/Volumes/My Passport/D17_Data_2014_Distro/02_SJER/SJER_Spectrometer_Data/2013061320/Reflectance/')
     chmPath = (r'/Volumes/My Passport/D17_Data_2014_Distro/02_SJER/SJER_LiDAR_Data/CHM/r_filtered_CHM_pit_free.tif')
 
@@ -35,14 +35,14 @@ os.getcwd()
 
 import h5py 
 import numpy as np
-from writeGeotiff import writeGeotiff
-from clipRaster_CHM import clipRaster
-from getFileList import geth5FileList
-from os.path import join
+from writeGeotiff import writeGeotiff # .py file in another folder
+from clipRaster_CHM import clipRaster # .py file in another folder
+from getFileList import geth5FileList # .py file in another folder
+from os.path import join 
 from pandas import read_csv
-from derivePlotBoundary import derivePlotBoundary
-from processNDVI import processNDVI
-from extractBrightestPixels import findBrightPixels
+from derivePlotBoundary import derivePlotBoundary # .py file in another folder
+from processNDVI import processNDVI # .py file in another folder
+from extractBrightestPixels import findBrightPixels # .py file in another folder
 
 
 
