@@ -11,28 +11,6 @@ a. metadata
 #set working directory
 import os
 import platform
-
-
-########################## DEFINE PATHS #################################
-#########################################################################
-
-os.chdir('c:/Users/cflagg/Documents/GitHub/pythonWork/canopyN')
-
-#check to see what platform i'm running on
-if platform.system() == 'Windows':
-    #set basepath for windows
-    basePath='c:/Users/cflagg/Documents/GitHub/pythonWork/canopyN'
-    fileDirectory = (r'G:/D17_Data_2014_Distro/02_SJER/SJER_Spectrometer_Data/2013061320/Reflectance/')
-else:
-    #path to MAC git repo
-    basePath='/Users/cflagg/Documents/GitHub/pythonWork/canopyN'
-    fileDirectory = (r'/Volumes/My Passport/D17_Data_2014_Distro/02_SJER/SJER_Spectrometer_Data/2013061320/Reflectance/')
-    chmPath = (r'/Volumes/My Passport/D17_Data_2014_Distro/02_SJER/SJER_LiDAR_Data/CHM/r_filtered_CHM_pit_free.tif')
-
-os.chdir(basePath)
-os.getcwd()
-
-
 import h5py 
 import numpy as np
 from writeGeotiff import writeGeotiff # .py file in another folder
@@ -44,7 +22,25 @@ from derivePlotBoundary import derivePlotBoundary # .py file in another folder
 from processNDVI import processNDVI # .py file in another folder
 from extractBrightestPixels import findBrightPixels # .py file in another folder
 
+########################## DEFINE PATHS #################################
+#########################################################################
 
+os.chdir('c:/Users/cflagg/Documents/GitHub/pythonWork/canopyN')
+
+#check to see what platform i'm running on
+if platform.system() == 'Windows':
+    #set basepath for windows
+    basePath='c:/Users/cflagg/Documents/GitHub/pythonWork/canopyN'
+    fileDirectory = (r'D:/D17/SJER/2013/SJER_L1/SJER_Spectrometer/2013061320/Reflectance/')
+#else:
+    #path to MAC git repo
+#    basePath='/Users/cflagg/Documents/GitHub/pythonWork/canopyN'
+#    fileDirectory = (r'/Volumes/My Passport/D17_Data_2014_Distro/02_SJER/SJER_Spectrometer_Data/2013061320/Reflectance/')
+#    chmPath = (r'/Volumes/My Passport/D17_Data_2014_Distro/02_SJER/SJER_LiDAR_Data/CHM/r_filtered_CHM_pit_free.tif')
+
+os.chdir(basePath)
+os.getcwd()
+os.listdir(fileDirectory)
 
 
 #just in case i need to hit sandbox again..
@@ -67,7 +63,7 @@ CHMtiffpath = basePath+'/data/chmTiff/'
 
 xyPlotLoc  = basePath+ '/fieldData/SJERPlotCentroids.csv'
 
-chmPath = 
+#chmPath = 
 
 #########################################################################
 
@@ -383,7 +379,7 @@ clippedCHM={}
 
 for plot in plotNamesList:    
     #import chm
-    CHM= (r'/Volumes/My Passport/D17_Data_2014_Distro/02_SJER/SJER_LiDAR_Data/CHM/r_filtered_CHM_pit_free.tif')  
+    CHM = (r'/Volumes/My Passport/D17_Data_2014_Distro/02_SJER/SJER_LiDAR_Data/CHM/r_filtered_CHM_pit_free.tif')  ## FIX PATH
    
    
        
