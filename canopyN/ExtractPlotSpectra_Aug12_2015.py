@@ -3,13 +3,14 @@
 Created on Thu Dec 04 17:16:27 2014
 This code will run through a directory of H5 files and will extract 
 a. metadata
-@author: lwasser
+@author: lwasser; modified by cflagg
 """
 ###############################################
 #Import Required Functions
 ###############################################
 #set working directory
 import os
+os.chdir('c:/Users/cflagg/Documents/GitHub/pythonWork/canopyN') # set dir so it imports the correct files
 import platform
 import h5py 
 import numpy as np
@@ -22,10 +23,10 @@ from derivePlotBoundary import derivePlotBoundary # .py file in another folder
 from processNDVI import processNDVI # .py file in another folder
 from extractBrightestPixels import findBrightPixels # .py file in another folder
 
+
+
 ########################## DEFINE PATHS #################################
 #########################################################################
-
-os.chdir('c:/Users/cflagg/Documents/GitHub/pythonWork/canopyN')
 
 #check to see what platform i'm running on
 if platform.system() == 'Windows':
@@ -38,9 +39,10 @@ if platform.system() == 'Windows':
 #    fileDirectory = (r'/Volumes/My Passport/D17_Data_2014_Distro/02_SJER/SJER_Spectrometer_Data/2013061320/Reflectance/')
 #    chmPath = (r'/Volumes/My Passport/D17_Data_2014_Distro/02_SJER/SJER_LiDAR_Data/CHM/r_filtered_CHM_pit_free.tif')
 
-os.chdir(basePath)
-os.getcwd()
-os.listdir(fileDirectory)
+#os.chdir(basePath)
+#os.getcwd()
+#os.listdir(fileDirectory)
+
 
 
 #just in case i need to hit sandbox again..
@@ -372,28 +374,28 @@ name=plot[:4]+'spectra.csv'
 np.savetxt(name, finalSpectra, delimiter=",",fmt='%1.5d')
 
 
-##################### CLIP CHM to Study Region ##############################
+##################### CLIP Canopy Height Model (CHM) to Study Region ##############################
 #############################################################################
-clippedCHM={}
-# use chmPath
-
-for plot in plotNamesList:    
-    #import chm
-    CHM = (r'/Volumes/My Passport/D17_Data_2014_Distro/02_SJER/SJER_LiDAR_Data/CHM/r_filtered_CHM_pit_free.tif')  ## FIX PATH
-   
-   
-       
-    #clipRaster(inputRaster,clipExtent)
-    #[leftx, rightx, topy, bottomy]
-    #plot vertices was: [left X, Lower Y, right X, Upper Y ]
-    #it's now leftx, rightx, topy, bottomy
-    extent=[ plotBound[plot][0][0],plotBound[plot][0][1],plotBound[plot][0][2],plotBound[plot][0][3]]
-    #return an array representing the clipped CHM
-    clippedCHM[plot]=clipRaster(CHM,extent)
-     
-    #write the CHM out as a geotif
-    filenameCHM=('data/chmTiff/' + plot + 'chm.tif' )
-    writeGeotiff(filenameCHM,clippedCHM[plot],plotBound[plot][0][0],plotBound[plot][0][2],EPSG=32611)
+#clippedCHM={}
+## use chmPath
+#
+#for plot in plotNamesList:    
+#    #import chm
+#    CHM = (r'/Volumes/My Passport/D17_Data_2014_Distro/02_SJER/SJER_LiDAR_Data/CHM/r_filtered_CHM_pit_free.tif')  ## FIX PATH
+#   
+#   
+#       
+#    #clipRaster(inputRaster,clipExtent)
+#    #[leftx, rightx, topy, bottomy]
+#    #plot vertices was: [left X, Lower Y, right X, Upper Y ]
+#    #it's now leftx, rightx, topy, bottomy
+#    extent=[ plotBound[plot][0][0],plotBound[plot][0][1],plotBound[plot][0][2],plotBound[plot][0][3]]
+#    #return an array representing the clipped CHM
+#    clippedCHM[plot]=clipRaster(CHM,extent)
+#     
+#    #write the CHM out as a geotif
+#    filenameCHM=('data/chmTiff/' + plot + 'chm.tif' )
+#    writeGeotiff(filenameCHM,clippedCHM[plot],plotBound[plot][0][0],plotBound[plot][0][2],EPSG=32611)
 
 ####################### END CLIP CHM #######################################
 ############################################################################
@@ -439,16 +441,6 @@ print ("NDNI calculated")
 
 
 
-
-
-
-
-
-
-
-
-
-
 ####################################
 #OPTIONAL - quick plot to test that this is working!!
 #####################################
@@ -459,25 +451,25 @@ list2d = plotReflectance
 merged = list(itertools.chain.from_iterable(list2d))
 
 
-from matplotlib import pyplot as plt
-plt.hist(merged)
-plt.title("Histogram")
-plt.xlabel("Reflectance")
-plt.ylabel("Frequency")
-
-#render a quick image
-plt.imshow(plotReflectance)
-    
-
-    #format the data just like the AOP data are formatted
-    #groupName='/Reflectance'
-    #print(groupName)				
-    #check to see if this group already exists
-    #if plotData[groupName]:			
-	#del plotData[groupName]
-    #plotData[groupName] = plotReflectance_Sub
-    #newdict[groupName]	= plotReflectance_Sub
-    
+#from matplotlib import pyplot as plt
+#plt.hist(merged)
+#plt.title("Histogram")
+#plt.xlabel("Reflectance")
+#plt.ylabel("Frequency")
+#
+##render a quick image
+#plt.imshow(plotReflectance)
+#    
+#
+#    #format the data just like the AOP data are formatted
+#    #groupName='/Reflectance'
+#    #print(groupName)				
+#    #check to see if this group already exists
+#    #if plotData[groupName]:			
+#	#del plotData[groupName]
+#    #plotData[groupName] = plotReflectance_Sub
+#    #newdict[groupName]	= plotReflectance_Sub
+#    
 
 print "That's All Folks!"
 
