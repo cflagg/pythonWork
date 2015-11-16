@@ -31,7 +31,7 @@ from extractBrightestPixels import findBrightPixels # .py file in another folder
 if platform.system() == 'Windows':
     #set basepath for windows
     basePath='c:/Users/cflagg/Documents/GitHub/pythonWork/canopyN'
-    fileDirectory = (r'D:/D17/SJER/2013/SJER_L1/SJER_Spectrometer/2013061320/Reflectance/')
+    fileDirectory = (r'D:/D3/OSBS/2014/OSBS_L1/OSBS_Spectrometer/Reflectance/')
 #else:
     #path to MAC git repo
 #    basePath='/Users/cflagg/Documents/GitHub/pythonWork/canopyN'
@@ -49,9 +49,12 @@ if platform.system() == 'Windows':
    
 ###################################################   
 # os.sep '\\'
+#  
+# # Folders for OUTPUT   
 # try to use this to get the blob library to work
 #####################################################   
     
+
 #the path where the h5 files will be stored
 plotH5FilePath = basePath+ '/data/h5/'
 
@@ -62,7 +65,9 @@ NDVItiffpath = basePath+'/data/ndviTiff/'
 #CHM tiff folder
 CHMtiffpath = basePath+'/data/chmTiff/'
 
-xyPlotLoc  = basePath+ '/fieldData/SJERPlotCentroids.csv'
+
+## NEED THIS FOR OSBS
+xyPlotLoc  = basePath+ '/fieldData/OSBSPlotCentroids.csv'
 
 #chmPath = 
 
@@ -139,6 +144,7 @@ print("All Files Inventoried - finalLookup Table Created!")
 #plotBoundariesPath=(r'C:/Users/lwasser/Documents/GitHub/pythonWork/canopyN/data/sjerPlots/SJERPlotCentroids_Buff_Square.shp')
 
 #import text file with plot name and x,y centroid.
+# this imports the plot centroids
 p = open(xyPlotLoc)
 dfPlotLoc = read_csv(p, header=0)
 
@@ -214,8 +220,8 @@ print('plotIdDict - A dictionary of h5 files for each plot is created')
 
 ###################################
 
-### probably should be consistent and use pandas)
-
+### probably should be consistent and use pandas
+### FIX THIS
 import csv
 f = open('inputs/SJERTiles.txt')
 csvRead=csv.reader(f)
@@ -251,7 +257,7 @@ for keys in disDict:
     reflectance=file['/Reflectance']
 
     #get flightline ID	
-    flID=	int(disDict[keys][0])	
+    flID = int(disDict[keys][0])	
     # Grab the lower left corner of the flightline from the original flightline lookup table
     flLowerCorner= [finalLookup[flID][3],finalLookup[flID][1]]
     ###########################################################################
