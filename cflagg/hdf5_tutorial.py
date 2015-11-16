@@ -43,6 +43,7 @@ f.values
 os.chdir('D:/D3/OSBS/2014/OSBS_L1/OSBS_Spectrometer/Reflectance')
 os.listdir(os.getcwd())
 
+# a random H5 file
 g = h5.File('NIS1_20140507_143910_atmcor.h5', 'r')
 
 # print names within 'g' -- this calls a function...within a function?
