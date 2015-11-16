@@ -59,7 +59,7 @@ import numpy as np
 f = open(fieldDataPath + 'D17_2013_foliarChem.csv')
 dfChem = read_csv(f, header=0)
 
-g =open(fieldDataPath +'D17_2013_vegStr.csv')
+g = open(fieldDataPath +'D17_2013_vegStr.csv')
 dfStr = read_csv(g,header=0)
 
 
@@ -227,58 +227,59 @@ m, b = np.polyfit(x, y, 1)
 
 
 ############################# SEABORN PLOT #############
-#
-#import seaborn as sns
-#
+
+import seaborn as sns
+
+# this is a magic call for iPython notebook
 #%matplotlib tk 
-#
-#ax=sns.regplot(x,
-#               y,
-#               color='k', 
-#               ci=None)
-#               
-##set the axis limits               
-#ax.set(xlim=(.024, .032))
-#ax.set(ylim=(.5, 2.5))
-#
-#
-##label axes
-#plt.xlabel('HSI - Average Plot NDNI', fontsize=18)
-#plt.title('NDNI vs Measured Leaf Canopy N', fontsize=25)
-#plt.ylabel('Measured - Plot Average Total N', fontsize=18)
-#plt.text(.03, 2.3, r'y=' + str(round(m,2)) + 'x+' + str(round(b,2)), fontsize=16)
-#plt.text(.03, 2.2, 'R2=' + str(round((r_value**2),2)), fontsize=16)
-#plt.text(.03, 2.1, r'p-value= '+ str(round(p_value,4)), fontsize=16 )
-#start, end = ax.get_xlim()
-#ax.xaxis.set_ticks(np.arange(.024, .034, .002))
-#
+
+ax=sns.regplot(x,
+               y,
+               color='k', 
+               ci=None)
+               
+#set the axis limits               
+ax.set(xlim=(.024, .032))
+ax.set(ylim=(.5, 2.5))
+
+
+#label axes
+plt.xlabel('HSI - Average Plot NDNI', fontsize=18)
+plt.title('NDNI vs Measured Leaf Canopy N', fontsize=25)
+plt.ylabel('Measured - Plot Average Total N', fontsize=18)
+plt.text(.03, 2.3, r'y=' + str(round(m,2)) + 'x+' + str(round(b,2)), fontsize=16)
+plt.text(.03, 2.2, 'R2=' + str(round((r_value**2),2)), fontsize=16)
+plt.text(.03, 2.1, r'p-value= '+ str(round(p_value,4)), fontsize=16 )
+start, end = ax.get_xlim()
+ax.xaxis.set_ticks(np.arange(.024, .034, .002))
+
 ############################### end seaborn #############
 #
 #
 ########################  Create Boxplot of 
 #
-#newDF=pd.concat([siteOnly['siteNum'], 
-#                 siteOnly['totalN'],
-#                 siteOnly['species_code']],axis=1)
-#
-#newDF.boxplot(by='species_code')
-#plt.title('By Species', fontsize=25)
-#plt.xlabel('Species Code', fontsize=18)
-#
-#
-#ax = sns.boxplot(x='species_code', data=newDF)
-#
-#
-#newDF.boxplot(by='siteNum')
-#
-#
-#
-#
-#plt=newDF.boxplot(by='species_code')
-#
-##fig = axes[0][0].get_figure()
-#
-#plt.title("Boxplot of Something")
+newDF=pd.concat([siteOnly['siteNum'], 
+                 siteOnly['totalN'],
+                 siteOnly['species_code']],axis=1)
+
+newDF.boxplot(by='species_code')
+plt.title('By Species', fontsize=25)
+plt.xlabel('Species Code', fontsize=18)
+
+
+ax = sns.boxplot(x='species_code', data=newDF)
+
+
+newDF.boxplot(by='siteNum')
+
+
+
+
+plt=newDF.boxplot(by='species_code')
+
+#fig = axes[0][0].get_figure()
+
+plt.title("Boxplot of Something")
 ######################### end boxplot
 #
 #
@@ -286,41 +287,41 @@ m, b = np.polyfit(x, y, 1)
 #
 #
 #
-#plt.plot(x, y, '.')
-#plt.plot(x, m*x + b, '-')
-#plt.ylabel('Measured - Plot Average Total N', fontsize=15)
-#plt.xlabel('HSI - Avg Plot NDNI', fontsize=15)
-#plt.title('NDNI vs Measured Leaf Canopy N', fontsize=20)
-#plt.xlim(0.025,.032)
-#plt.ylim(1,2.3)
-#plt.text(.03, 2.2, r'y=' + str(round(m,2)) + 'x+' + str(round(b,2)))
-#plt.text(.03, 2.15, 'R2=' + str(round((r_value**2),2)))
-#plt.text(.03, 2.1, r'p-value= '+ str(round(p_value,4)) )
+plt.plot(x, y, '.')
+plt.plot(x, m*x + b, '-')
+plt.ylabel('Measured - Plot Average Total N', fontsize=15)
+plt.xlabel('HSI - Avg Plot NDNI', fontsize=15)
+plt.title('NDNI vs Measured Leaf Canopy N', fontsize=20)
+plt.xlim(0.025,.032)
+plt.ylim(1,2.3)
+plt.text(.03, 2.2, r'y=' + str(round(m,2)) + 'x+' + str(round(b,2)))
+plt.text(.03, 2.15, 'R2=' + str(round((r_value**2),2)))
+plt.text(.03, 2.1, r'p-value= '+ str(round(p_value,4)) )
+
+#r'St Error='+ str(round(std_err,4)) + 
+    
+from scipy import stats
+slope, intercept, r_value, p_value, std_err = stats.linregress(x,y)
+print "r-squared:", r_value**2
+
 #
-##r'St Error='+ str(round(std_err,4)) + 
+#
+#
 #    
-#from scipy import stats
-#slope, intercept, r_value, p_value, std_err = stats.linregress(x,y)
-#print "r-squared:", r_value**2
-#
-#
-#
-#
 #    
 #    
-#    
-##Plot NDVI
+#Plot NDVI
 #%matplotlib tk 
-#
-#imgPlot = plt.imshow(NDVIdict['SJER37'])
-#imgPlot.set_cmap('Greens')
-#plt.title('NDVI SJER37', fontsize=20)
-#plt.colorbar()
-#
-##Plot CHM
-#
-#imgPlot = plt.imshow(clippedCHM['SJER37'])
-#plt.title('CHM SJER37', fontsize=20)
-#imgPlot.set_cmap('Greys')
-#plt.colorbar()
-#    
+
+imgPlot = plt.imshow(NDVIdict['SJER37'])
+imgPlot.set_cmap('Greens')
+plt.title('NDVI SJER37', fontsize=20)
+plt.colorbar()
+
+#Plot CHM
+
+imgPlot = plt.imshow(clippedCHM['SJER37'])
+plt.title('CHM SJER37', fontsize=20)
+imgPlot.set_cmap('Greys')
+plt.colorbar()
+    
