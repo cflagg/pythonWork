@@ -69,8 +69,6 @@ store[4]
 # split out the string with regex
 type(space.value) # this is a numpy,ndarray
 
-
-
 pprint(space.value)
 
 pprint(vars(space))
@@ -79,4 +77,3 @@ pprint(vars(space))
 Str1= 'cody-is-a-good-programmer'
 list1 = Str1.split('-')
 print list1
-

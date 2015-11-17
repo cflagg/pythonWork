@@ -25,7 +25,7 @@ f <- 'D:/D17/SJER/2013/SJER_L1/SJER_Spectrometer/2013061320/Reflectance/NIS1_201
 h5ls(f,all=T)
 
 #r get spatial info and map info using the h5readAttributes function developed by Ted Hart
-spinfo <- h5readAttributes(f,"coordinate system string")
+spinfo <- h5read(f,"coordinate system string")
 
 # the upper left-hand corner of the flight line
 box <- h5read(f, "map info")
