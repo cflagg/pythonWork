@@ -21,6 +21,8 @@ os.listdir(mypath)
 # open h5 file - this one is created by Leah's script -- it has no meta-data
 f = h5.File('SJER36.h5', 'r')
 
+f.name
+
 # this checks the "keys" of the H5 file i.e. what it contains
 f.keys()
 
@@ -51,6 +53,14 @@ g.visit(printname)
 
 # how do I grab the damn coordinates?
 space = g['map info']
+
+
+
+# grab the path length dimensions
+sto = g['Path Length']
+
+# split it out for the values
+repr(sto).split(',')[1:3]
 
 # list different methods
 dir(space)
