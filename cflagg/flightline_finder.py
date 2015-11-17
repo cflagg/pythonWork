@@ -30,18 +30,18 @@ os.chdir('D:/D3/OSBS/2014/OSBS_L1/OSBS_Spectrometer/Reflectance')
 
 hfiles = os.listdir(os.getcwd())
 
-# a random H5 file
-# g = h5.File('NIS1_20140507_143910_atmcor.h5', 'r')
+## a random H5 file
+#g = h5.File('NIS1_20140507_143910_atmcor.h5', 'r')
 
-# print names within 'g' -- this calls a function...within a function?
-# g.visit(printname)
-
-# how do I grab the damn coordinates?
-# space = g['map info']
-
-# list different methods
+## print names within 'g' -- this calls a function...within a function?
+#g.visit(printname)
+#
+## how do I grab the damn coordinates?
+#space = g['map info']
+#
+## list different methods
 #dir(space)
-
+#
 ## get coordinates from map info
 ## this returns the data stored by 'space' 
 #coords = space.value
@@ -56,27 +56,21 @@ hfiles = os.listdir(os.getcwd())
 ##############################################################################
 # http://stackoverflow.com/questions/9623398/text-files-in-a-dir-and-store-the-file-names-in-a-list-python
 count = 1
-fline_listx = [] # to store UTM data
-fline_listy = [] # to store UTM data
+fline_list = [] # to store UTM data
 fname_list = [] # to store filename
 for file in hfiles: 
     print file, count
     f = h5.File(file, 'r')
     corner = f['map info']
-    coords = corner.value
-    # split corner
-    unpack = repr(coords.tolist())
-    splits = unpack.split(',')
-    fline_listx.append(splits[3]) # this is how you add items to a list
-    fline_listy.append(splits[4]) # this is how you add items to a list
-    fname_list.append(file) # file name appending
+    fname_list.append(file)
+    fline_list.append(corner.value) # this is how you add items to a list
     count = count + 1
 
 # split the fline_list for easting and northing
 # only grab easting and northing
 
-pd.DataFrame({'fnames': fname_list, 'fline_x': fline_listx, 'fline_y': fline_listy})
+flightline_output = pd.DataFrame({'fnames': fname_list, 'fline': fline_list})
     
-
+    
 
     
