@@ -208,17 +208,15 @@ for plot in plotNamesList:
 
 								
 print('plotIdDict - A dictionary of h5 files for each plot is created')							
+####################################
+#import table of best flightlines
 
+###################################
 
 #loop through each plot and find the best flightline (closest to the center)
 #this code doesn't work properly so i'm bypassing it for the time being
 #with a manual approach (created a text file with the best flightline for each plot
 # this to be reassessed later. when the data are mosaicked this will be less of an issue
-
-####################################
-#import table of best flightlines
-
-###################################
 
 ### probably should be consistent and use pandas
 ### FIX THIS
@@ -235,6 +233,7 @@ print("Done Inventoring Data & Identifying Needed Flightlines!")
 
 
 ####################################
+
 #Extract spatial subset from spectrometer data
 #one subset for each plot
 

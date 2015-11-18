@@ -436,10 +436,6 @@ print ("NDNI calculated")
 
 
 
-
-
-
-
 ####################################
 #OPTIONAL - quick plot to test that this is working!!
 #####################################

@@ -5,14 +5,14 @@ Created on Sun Nov 30 20:13:35 2014
 @author: law
 """
 #import libraries that Python needs to read shapefiles
-#import os
+import os
 os.chdir('c:/Users/cflagg/Documents/GitHub/pythonWork/canopyN')
 # shapefile is a .py file distributed through: 
 # https://code.google.com/p/pyshp/
 # related to the library pyshp
 import shapefile
-#import h5py 
-#import numpy as np
+import h5py 
+import numpy as np
 
 #first get the plot coordinate
 
@@ -20,7 +20,7 @@ import shapefile
 #for mac
 #plotBoundariesPath=(r'/Volumes/My Passport/ESA_WorkshopData/WorkingDirectory/Field_SHP_Use/SJERPlotCentroids_Buff_Square.shp')
 # FIX THIS -- make a buffer around new plotCentroids
-plotBoundariesPath=(r'C:/Users/cflagg/Documents/GitHub/pythonWork/canopyN/data/sjerPlots/SJERPlotCentroids_Buff_Square.shp')
+plotBoundariesPath=(r'C:/Users/cflagg/Documents/GitHub/pythonWork/canopyN/data/osbsPlots/OSBS_plotBound.shp')
 
 sf = shapefile.Reader(plotBoundariesPath)
 shapes = sf.shapes()

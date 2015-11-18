@@ -14,6 +14,7 @@ import h5py as h5
 import glob
 import numpy as np
 import pandas as pd
+from pprint import pprint # formats printed output into a vertical list, rather than a massive blob
 
 basePath = "C:/Users/cflagg/Documents/GitHub/pythonWork/cflagg/"
 

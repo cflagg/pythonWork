@@ -12,8 +12,7 @@ import numpy as np
 
 #enter the directory that you wish to explore
 #fileDirectory = (r'/Volumes/My Passport/D17_Data_2014_Distro/02_SJER/SJER_Spectrometer_Data/2013061320/Reflectance/')
-fileDirectory = (r'D:/D17/SJER/2013/SJER_L1/SJER_Spectrometer/2013061320/Reflectance')
-
+fileDirectory = (r'D:/D3/OSBS/2014/OSBS_L1/OSBS_Spectrometer/Reflectance/')
 
 #get a list of all files in the directory
 from os import listdir

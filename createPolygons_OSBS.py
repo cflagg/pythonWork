@@ -22,7 +22,7 @@ from pprint import pprint
 
 #open a file with the correct coordinate system (CRS)
 driver = ogr.GetDriverByName('ESRI Shapefile')
-dataset = driver.Open(r'c:/Users/cflagg/Documents/GitHub/pythonWork/canopyN/data/sjerPlots/SJERPlotCentroids_Buff_Square.shp')
+dataset = driver.Open(r'c:/Users/cflagg/Documents/GitHub/pythonWork/canopyN/data/osbsPlots/OSBS_plotBound.shp')
 
 # extract CRS from Layer
 layer = dataset.GetLayer()
@@ -32,7 +32,7 @@ spatialRef = layer.GetSpatialRef()
 driver = ogr.GetDriverByName('ESRI Shapefile')
 # if this file exists in the directory it will throw an Error 1, remove the file first and re-run
 # source: http://lists.osgeo.org/pipermail/gdal-dev/2006-March/008130.html
-new_shape = driver.CreateDataSource(r'C:/Users/cflagg/Documents/GitHub/pythonWork/canopyN/data/sjerPlots/sjer_shapefile.shp') 
+new_shape = driver.CreateDataSource(r'C:/Users/cflagg/Documents/GitHub/pythonWork/canopyN/data/osbsPlots/osbs_shapefile.shp') 
 layer = new_shape.CreateLayer('Layer 1', spatialRef, ogr.wkbPolygon)
 fieldDefn = ogr.FieldDefn('File_Name', ogr.OFTString)
 fieldDefn.SetWidth(14) 
