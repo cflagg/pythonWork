@@ -233,6 +233,7 @@ print("Done Inventoring Data & Identifying Needed Flightlines!")
 ## FIX THIS (works?) -- loop does not work -- should work now...an h5 file in the fileDirectory had a leading whitespace which caused the entire loop to fail -- need to add a try: call to avoid this problem
 ###################################
 
+
 from cleanOutDir import cleanOutDir
 
 #first clear out the H5 directory
@@ -273,7 +274,7 @@ for keys in disDict:
 
 
 
-### A test loop of the above    
+#### A test loop of the above    
 #for keys in disDict:
 #    # hFile = h5py.File(r'data/h5/' + keys + '.h5', 'w')  
 #    #print hFile -- works
