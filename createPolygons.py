@@ -32,7 +32,7 @@ spatialRef = layer.GetSpatialRef()
 driver = ogr.GetDriverByName('ESRI Shapefile')
 # if this file exists in the directory it will throw an Error 1, remove the file first and re-run
 # source: http://lists.osgeo.org/pipermail/gdal-dev/2006-March/008130.html
-new_shape = driver.CreateDataSource(r'C:/Users/cflagg/Documents/GitHub/pythonWork/canopyN/data/sjerPlots/sjer_shapefile.shp') 
+new_shape = driver.CreateDataSource(r'C:/Users/cflagg/Documents/GitHub/pythonWork/canopyN/data/sjerPlots/sjer_tile.shp') 
 layer = new_shape.CreateLayer('Layer 1', spatialRef, ogr.wkbPolygon)
 fieldDefn = ogr.FieldDefn('File_Name', ogr.OFTString)
 fieldDefn.SetWidth(14) 

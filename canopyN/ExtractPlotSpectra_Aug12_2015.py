@@ -225,6 +225,9 @@ disDict={}
 for row in csvRead:
     disDict[row[0]]=(row[1],row[2])
     
+for row in csvRead:
+    print row
+    
 print("Done Inventoring Data & Identifying Needed Flightlines!")
 
 

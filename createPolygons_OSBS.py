@@ -16,7 +16,7 @@ to ensure things are correct.
 # $ brew install gdal 
 # $ sudo pip install GDAL
 
-import os
+#import os
 from osgeo import ogr
 from pprint import pprint
 
@@ -28,11 +28,11 @@ dataset = driver.Open(r'c:/Users/cflagg/Documents/GitHub/pythonWork/canopyN/data
 layer = dataset.GetLayer()
 spatialRef = layer.GetSpatialRef()
 
-#Create new shapefile
+#Create new shapefile that captures the H5 file name for the underlying plotID
 driver = ogr.GetDriverByName('ESRI Shapefile')
 # if this file exists in the directory it will throw an Error 1, remove the file first and re-run
 # source: http://lists.osgeo.org/pipermail/gdal-dev/2006-March/008130.html
-new_shape = driver.CreateDataSource(r'C:/Users/cflagg/Documents/GitHub/pythonWork/canopyN/data/osbsPlots/osbs_shapefile.shp') 
+new_shape = driver.CreateDataSource(r'C:/Users/cflagg/Documents/GitHub/pythonWork/canopyN/data/osbsPlots/osbs_tiles.shp') 
 layer = new_shape.CreateLayer('Layer 1', spatialRef, ogr.wkbPolygon)
 fieldDefn = ogr.FieldDefn('File_Name', ogr.OFTString)
 fieldDefn.SetWidth(14) 

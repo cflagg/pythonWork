@@ -39,6 +39,7 @@ for j in xrange(len(shapes)):
     #bbox saves 4 corners as follows [left X, Lower Y, right X, Upper Y ]
     plotVertices=shapes[j].bbox
     print(j)
+    
     #grab plot centroid coords
     plotCentroidX=float(records[j][3])
     plotCentroidY=float(records[j][2])
@@ -53,9 +54,14 @@ for j in xrange(len(shapes)):
     isInTemp=[]
     for i in xrange(len(finalLookup)):  
         print(i)
-        if ((plotVertices[0] > finalLookup[i][3]) and (plotVertices[2] < finalLookup[i][4])) and ((plotVertices[1] > finalLookup[i][2]) and (plotVertices[3] < finalLookup[i][1])):
+        # bbox[] > easting and bbox
+        if ((plotVertices[0] > finalLookup[i][3]) and 
+        (plotVertices[2] < finalLookup[i][4])) and 
+        ((plotVertices[1] > finalLookup[i][2]) and 
+        (plotVertices[3] < finalLookup[i][1])):
             print("in X and Y bounds")
             isInTemp.append([i,finalLookup[i][0],finalLookup[i][1],finalLookup[i][2],finalLookup[i][3],finalLookup[i][4]])
+            # finalLookup[x][0] = H5file; final[x][1] = northing; final[x][3] = easting
             isInFlightLine.append([records[j][0],i,finalLookup[i][0],finalLookup[i][1],finalLookup[i][2],finalLookup[i][3]])
         plotIdDict[records[j][0]]=[isInTemp]
 
