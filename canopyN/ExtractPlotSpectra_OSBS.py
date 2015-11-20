@@ -363,7 +363,7 @@ for file in plotH5files:
     
     #get plot name
     if file.endswith('.h5'):
-      plot = file[:-3]
+        plot = file[:-3]
       
         #default NDVI bands redBand=53,NIRband=95, redEnd=57, NIRend=99
         ndviOut=processNDVI(reflectance)   
