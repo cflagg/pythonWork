@@ -243,11 +243,16 @@ from matplotlib import pyplot as plt
 x=np.array(x_ndni)
 y=np.array(y_nitro)
 
+# make sure they have the same dimensions, else linregress won't work
+y.shape = (len(y),)
+x.shape = (len(x),)
+
 plt.plot(x, y, '.')
 
 from scipy import stats
 slope, intercept, r_value, p_value, std_err = stats.linregress(x,y)
 print "r-squared:", r_value**2
+
 
 # fit with np.polyfit
 m, b = np.polyfit(x, y, 1)
@@ -260,13 +265,13 @@ import seaborn as sns
 # this is a magic call for iPython notebook
 #%matplotlib tk 
 
-ax=sns.regplot(x_ndni,
-               y_nitro,
+ax=sns.regplot(x,
+               y,
                color='k', 
                ci=None)
                
 #set the axis limits               
-ax.set(xlim=(.024, .032))
+ax.set(xlim=(.024, .06))
 ax.set(ylim=(.5, 2.5))
 
 
@@ -293,19 +298,13 @@ newDF.boxplot(by='taxonid')
 plt.title('By Species', fontsize=25)
 plt.xlabel('Species Code', fontsize=18)
 
-
 ax = sns.boxplot(x='taxonid', data=newDF)
 
-
 newDF.boxplot(by='siteNum')
-
-
-
 
 plt=newDF.boxplot(by='taxonid')
 
 #fig = axes[0][0].get_figure()
-
 plt.title("Boxplot of Something")
 ######################### end boxplot
 #
