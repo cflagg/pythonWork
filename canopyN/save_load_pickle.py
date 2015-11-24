@@ -10,7 +10,7 @@ source: https://wiki.python.org/moin/UsingPickle
 import pickle
 
 # save the NDNI data with pickle -- defaults to working directory
-pickle.dump(NDNI, open("NDNI_OSBS.p","wb"))
+pickle.dump(NDNI, open("NDNI_SJER.p","wb"))
 
 # load the pickle -- again, defaults to working dir
-NDNI = pickle.load(open("NDNI_OSBS.p", "rb"))
+NDNI = pickle.load(open("NDNI_SJER.p", "rb"))

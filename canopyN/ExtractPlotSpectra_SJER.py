@@ -221,11 +221,6 @@ f = open('inputs/SJERTiles.txt')
 csvRead=csv.reader(f)
 next(csvRead)
 
-disDict={}
-for row in csvRead:
-    disDict[row[0]]=(row[1],row[2])
-    
-print("Done Inventoring Data & Identifying Needed Flightlines!")
 
 
 ####################################
@@ -426,8 +421,8 @@ for file in briPixH5Files:
     
     #Select the reflectance dataset within the flightline 
     reflectance=H5file['/Reflectance']
-    b1=(reflectance[224,:]).astype('float')
-    b2=(reflectance[258,:]).astype('float')
+    b1=(reflectance[224,:]).astype('float') # first band
+    b2=(reflectance[258,:]).astype('float') # second band
     NDNI[plotName]=((1/np.log(b1))-(1/np.log(b2))) / ((1/np.log(b1))+(1/np.log(b2)))
 
     
