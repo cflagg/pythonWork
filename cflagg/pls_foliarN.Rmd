@@ -45,6 +45,7 @@ matplot(x = waterLine$wavelength, y= waterLine$reflectance, type = "l")
 
 filter(waterLine, ref > 6000)
 
+# Fill array with NA's, or remove the columns all together?
 # 1354 - 1414 nm
 # 1815 - 1930 nm
 # 2511 nm
