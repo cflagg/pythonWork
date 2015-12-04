@@ -221,12 +221,14 @@ f = open('inputs/SJERTiles.txt')
 csvRead=csv.reader(f)
 next(csvRead)
 
-
+# dictionary needed to match flightlines and plots
+disDict={}
+for row in csvRead:
+    disDict[row[0]]=(row[1],row[2])
 
 ####################################
 #Extract spatial subset from spectrometer data
 #one subset for each plot
-
 ###################################
 
 from cleanOutDir import cleanOutDir
@@ -262,9 +264,10 @@ for keys in disDict:
     numBands=len(reflectance)
     #Define the final slice from the flightline      
     plotReflectance=reflectance[0:numBands,SubsetCoordinates[2]:SubsetCoordinates[3],SubsetCoordinates[0]:SubsetCoordinates[1]]   
-    
     #grp = hFile.create_group("Reflectance")
     hFile['Reflectance'] = plotReflectance
+    # NEW -- append spatial info!
+    hFile['plotBoundaries'] = plotBound[keys][0]
     file.close()
     hFile.close()
 
@@ -290,7 +293,7 @@ cleanOutDir(NDVItiffpath+'*')
 
 
 # functions i created to calculate NDVI for each plot and extract
-#only pixels that are "bright" (healthier veg)
+# only pixels that are "bright" (healthier veg, or actual veg)
 
 
 NDVIdict={}   
@@ -305,7 +308,7 @@ for file in plotH5files:
     #Select the reflectance dataset within the flightline 
     reflectance=H5file['/Reflectance']
     
-    #get plot name
+    # get plot name
     if file.endswith('.h5'):
       plot = file[:-3]
       
@@ -354,7 +357,6 @@ for file in plotH5files:
     
 
     ########### end export CSV for convolution ###########
-    
     #create H5 file that will store the plot level spectra (brightest pixels)
     hFile = h5py.File('data/brightPixelsH5/bri' + plot + '.h5', 'a')  
     #grp = hFile.create_group("Reflectance")
@@ -362,6 +364,7 @@ for file in plotH5files:
     H5file.close()
     hFile.close()
  
+ # these are plot spectra csv files 
 name=plot[:4]+'spectra.csv'
 
 #export csv
@@ -418,18 +421,13 @@ for file in briPixH5Files:
     filePath =(briPixH5Path + file) 
     #open the h5 file     
     H5file = h5py.File(filePath, 'r')   # 'r' means that hdf5 file is open in read-only mode
-    
     #Select the reflectance dataset within the flightline 
     reflectance=H5file['/Reflectance']
     b1=(reflectance[224,:]).astype('float') # first band
     b2=(reflectance[258,:]).astype('float') # second band
     NDNI[plotName]=((1/np.log(b1))-(1/np.log(b2))) / ((1/np.log(b1))+(1/np.log(b2)))
 
-    
-
 print ("NDNI calculated")
-
-
 
 ####################################
 #OPTIONAL - quick plot to test that this is working!!

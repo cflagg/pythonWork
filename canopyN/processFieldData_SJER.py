@@ -17,6 +17,7 @@ Finally it will produce the Regression of Canopy n vs NDNI
 #set working directory
 import os
 import platform
+import pickle
 
 ########################## DEFINE PATHS #################################
 #########################################################################
@@ -40,9 +41,7 @@ os.getcwd()
 #Identify the Site you wish to query data for
 site='SJER'
 
-
 ###################### Define Paths ##################################
-
 #Define Field Data Path
 plotH5FilePath= basePath + '/data/h5/'
 #fieldDataPath='F:/D17_Data_2014_Distro/06_Field_Data/Sampling_Data/D17_Foliar_Chemistry/'
@@ -62,6 +61,8 @@ dfChem = read_csv(f, header=0)
 g = open(fieldDataPath +'D17_2013_vegStr.csv')
 dfStr = read_csv(g,header=0)
 
+# this is a pickled NDNI dictionary 
+NDNI = pickle.load(open(basePath + "/data/processed/ndni/NDNI_SJER.p", "rb"))
 
 #get unique site names
 plots=np.unique(dfStr.plotid.ravel())

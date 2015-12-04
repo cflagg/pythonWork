@@ -7,6 +7,18 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from pprint import pprint
 
+################################################ this closes all HDF5 file that may be open
+## from: http://stackoverflow.com/questions/29863342/close-an-open-h5py-data-file
+import gc
+for obj in gc.get_objects():   # Browse through ALL objects
+    if isinstance(obj, h5py.File):   # Just HDF5 files
+        try:
+            obj.close() # if it's an h5 file, try to close it
+        except: # otherwise keep going
+            pass # Was already closed
+            
+###
+
 # print names of groups function, call within file.visit(printname)
 def printname(name):
     print name
@@ -53,8 +65,6 @@ g.visit(printname)
 
 # how do I grab the damn coordinates?
 space = g['map info']
-
-
 
 # grab the path length dimensions
 sto = g['Path Length']

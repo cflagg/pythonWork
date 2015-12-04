@@ -1,0 +1,119 @@
+---
+title: "PLS_FoliarN"
+author: "Cody Flagg"
+date: "December 3, 2015"
+output: html_document
+---
+
+```{r}
+# TO DO
+# CONVERT RAW DN TO REFLECTANCE -- MAX DN VALUE = 15000
+```
+
+```{r}
+# pls analysis
+library(pls)
+library(plyr)
+library(dplyr)
+
+# wavelength file
+wavelengths <-read.csv("C:/Users/cflagg/Documents/GitHub/pythonWork/pls/wavelengths_um.csv")
+
+# read in data
+osbs_in <- read.csv("C:/Users/cflagg/Documents/GitHub/pythonWork/pls/osbs_n_ref.csv")
+jerc_in <- read.csv("C:/Users/cflagg/Documents/GitHub/pythonWork/pls/jerc_n_ref.csv")
+# sjer_in <- read.csv("C:/Users/cflagg/Documents/GitHub/pythonWork/pls/sjer_n_ref.csv")
+
+# merge the data sets
+ref_dat <- plyr::rbind.fill(osbs_in, jerc_in)
+
+## WES ANDERSON COLOR PALETTE
+```
+
+```{r}
+wavelength <- round(wavelengths[,2]*1000) # wavelengths captured by machine
+reflectance <- ref_dat[,c(3:428)] # reflectance values 
+
+# need to setup the x-axis, the wavelengths, and a transpose of the reflectance matrix with t()
+reflectance.plot = matplot(x = wavelength, y = t(reflectance/10000),lty=1,xlab="wavelengths(nm)",ylab="Raw DN",type="l", main = "Raw DN by Stem | Site", col = ref_dat$siteID)
+
+# dump the water absorption bands
+matplot(x = wavelength, y = t(reflectance[2,]), type = "l")
+waterLine <- data.frame(wavelength = wavelength, ref = c(t(reflectance[2,])))
+waterLine$reflectance <- ifelse(waterLine$ref > 6000, NA, waterLine$ref)
+matplot(x = waterLine$wavelength, y= waterLine$reflectance, type = "l")
+
+filter(waterLine, ref > 6000)
+
+# 1354 - 1414 nm
+# 1815 - 1930 nm
+# 2511 nm
+```
+
+
+## Initial PLS
+```{r}
+# x/predictor cannot be a data frame, it has to be a matrix 
+# why this is the case: http://r.789695.n4.nabble.com/Error-invalid-type-list-for-variable-when-using-lm-td3045462.html
+# no soil data
+refl = as.matrix(reflectance/10000)
+log_refl = log(1/refl)
+pls1 <- plsr(total_n ~ refl, data = ref_dat, ncomp = 10, validation = "LOO")
+
+rmse_plot = plot(RMSEP(pls1), legendpos = "topright", main = "LOO Validation Error")
+# D
+```
+
+```{r}
+# prediction plot
+prediction.plot = plot(pls1, ncomp = 4, asp = 1, line = TRUE, ylim=c(0,1),xlim=c(0,1.2), main = "Obs. vs. Pred. - No Texture - 4 Components", ylab = "Predicted TSV", xlab = "Measured TSV")
+```
+
+\pagebreak
+
+### Fig. 1.3 - Component Correlations
+
+* These plots can be used to identify correlations among components. The procedure should produce mostly orthogonal components...
+
+```{r full-model corr plot, echo=FALSE, warning=FALSE}
+#plot(pls1,plottype="correlation")
+
+correlation.plot = plot(pls1, plottype = "scores", comps = 1:4, main = "Component Correlation Plot")
+
+pl_methods = names(pls1)
+
+pls1$Yscores
+pls1$Yloadings
+glimpse(pls1$loadings)
+str(pls1$loadings)
+
+```
+
+```{r}
+# explained variance
+barplot(explvar(pls1), axis.lty = 1, angle = 45, main = "% Variance Explained by Component", las = 2)
+
+# prediction of pls1 model against measured nitrogen
+pred1 <- predict(pls1, ncomp = 4, newdata = ref_dat)
+
+# linear model of this
+predm1 <- lm(ref_dat$total_n ~ pred1)
+# summary of the model
+summary(predm1)
+
+# plot it by siteID
+plot(pred1 ~ ref_dat$total_n, col = ref_dat$siteID, xlim = c(0,3), ylim = c(1, 2.5))
+abline(0,1) # 1:1 line
+```
+
+
+```{r}
+par(mfrow=c(1,1))
+loadingplot(pls1, comps = 1:2, legendpos = "topright", labels = c(401:2500), xlab = "Wavelength (nm)")
+abline(h=0)
+
+loadingplot(pls1, comps = 3:4, legendpos = "topright", labels = c(401:2500), xlab = "Wavelength (nm)")
+abline(h=0)
+
+```
+

@@ -24,6 +24,8 @@ f <- 'D:/D17/SJER/2013/SJER_L1/SJER_Spectrometer/2013061320/Reflectance/NIS1_201
 # columns, rows and band
 h5ls(f,all=T)
 
+wavelengths <- h5read(f, "wavelength")
+
 #r get spatial info and map info using the h5readAttributes function developed by Ted Hart
 spinfo <- h5read(f,"coordinate system string")
 
@@ -39,7 +41,6 @@ shapeWave<-dim(h5read(f,"wavelength"))
 wavelengths<- h5read(f,"wavelength",index=list(1:shapeWave[1],shapeWave[2]))
 
 #get the dimensions of the reflectance dataset in the H5 file
-
 shapeRefl<-dim(h5readAttributes(f,"Reflectance"))
 
 #r extract "slices" of data from an HDF5 file (read in only the parts that you need)

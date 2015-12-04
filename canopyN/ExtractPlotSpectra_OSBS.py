@@ -269,26 +269,9 @@ for keys in disDict:
     
     #grp = hFile.create_group("Reflectance")
     hFile['Reflectance'] = plotReflectance
+    hFile['plotBoundaries'] = plotBound[keys][0]
     file.close()
     hFile.close()
-
-
-
-#### A test loop of the above    
-#for keys in disDict:
-#    # hFile = h5py.File(r'data/h5/' + keys + '.h5', 'w')  
-#    #print hFile -- works
-#    filePath =(fileDirectory + disDict[keys][1]) 
-#    #print filePath -- works
-#    f = h5py.File(filePath, 'r')   # -- doesn't work FIX THIS -- won't open file -- 
-#    # appears to be a space in front of the ' NIS1_2014...'part of the filename
-#    print f['/Reflectance'] # -- doesn't work FIX THIS
-#        #get flightline ID	
-#    flID = int(disDict[keys][0])	
-#    # Grab the lower left corner of the flightline from the original flightline lookup table
-#    flLowerCorner= [finalLookup[flID][3],finalLookup[flID][1]]
-
-#f = h5py.File(filePath, 'r')
 
 #create list of plot level H5 files
 plotH5files=geth5FileList(plotH5FilePath)
@@ -320,36 +303,36 @@ brightPixels=[]
 
 
 ### TEST
-for file in plotH5files:
-    filePath =(plotH5FilePath + file) 
-    # print filePath -- works
-    #open the h5 file     
-    H5file = h5py.File(filePath, 'r') 
-    #print H5file -- works
-    reflectance = H5file['Reflectance']
-    #print reflectance -- works
-    if file.endswith('.h5'):
-        plot = file[:-3]
-        ndviOut = processNDVI(reflectance)
-        #print ndviOut -- works
-        filenameNDVI = ('data/NDVItiff/' + plot + 'NDVI.tif')
-        # print filenameNDVI\write
-        writeGeotiff(filenameNDVI,ndviOut,plotBound[plot][0][0],plotBound[plot][0][2])
-        # print filenameNDVI
-        NDVIdict[plot] = ndviOut
-        brightestBool = ndviOut>.6
-        print plot, 'brightpixels: ', (np.count_nonzero(brightestBool))
-        #lastly, extract brightest pixels
-        brightPixels=findBrightPixels(reflectance,brightestBool)
-        #transpose array so each band is a column
-        tranBPixels = np.transpose(brightPixels)
-        #print tranBPixels      
-        #a=len(tranBPixels[1])-1
-        #print a # -- THIS FAILS, FIX THIS, some of these files have no bright pixels perhaps the reason for failure 
-#        
-#        #insert the plot numbers in the first column
-#        tranBPixels=np.insert(tranBPixels, 0, int(plot[4:]), axis=1)
-### TEST
+#for file in plotH5files:
+#    filePath =(plotH5FilePath + file) 
+#    # print filePath -- works
+#    #open the h5 file     
+#    H5file = h5py.File(filePath, 'r') 
+#    #print H5file -- works
+#    reflectance = H5file['Reflectance']
+#    #print reflectance -- works
+#    if file.endswith('.h5'):
+#        plot = file[:-3]
+#        ndviOut = processNDVI(reflectance)
+#        #print ndviOut -- works
+#        filenameNDVI = ('data/NDVItiff/' + plot + 'NDVI.tif')
+#        # print filenameNDVI\write
+#        writeGeotiff(filenameNDVI,ndviOut,plotBound[plot][0][0],plotBound[plot][0][2])
+#        # print filenameNDVI
+#        NDVIdict[plot] = ndviOut
+#        brightestBool = ndviOut>.6
+#        print plot, 'brightpixels: ', (np.count_nonzero(brightestBool))
+#        #lastly, extract brightest pixels
+#        brightPixels=findBrightPixels(reflectance,brightestBool)
+#        #transpose array so each band is a column
+#        tranBPixels = np.transpose(brightPixels)
+#        #print tranBPixels      
+#        #a=len(tranBPixels[1])-1
+#        #print a # -- THIS FAILS, FIX THIS, some of these files have no bright pixels perhaps the reason for failure 
+##        
+##        #insert the plot numbers in the first column
+##        tranBPixels=np.insert(tranBPixels, 0, int(plot[4:]), axis=1)
+#### TEST
 
 
 for file in plotH5files:

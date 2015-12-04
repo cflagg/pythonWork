@@ -264,7 +264,6 @@ import seaborn as sns
 
 # this is a magic call for iPython notebook
 #%matplotlib tk 
-
 ax=sns.regplot(x,
                y,
                color='k', 
