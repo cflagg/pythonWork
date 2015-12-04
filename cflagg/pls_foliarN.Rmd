@@ -17,7 +17,7 @@ library(plyr)
 library(dplyr)
 
 # wavelength file
-wavelengths <-read.csv("C:/Users/cflagg/Documents/GitHub/pythonWork/pls/wavelengths_um.csv")
+wavelengths_df <-read.csv("C:/Users/cflagg/Documents/GitHub/pythonWork/pls/wavelengths_um.csv")
 
 # read in data
 osbs_in <- read.csv("C:/Users/cflagg/Documents/GitHub/pythonWork/pls/osbs_n_ref.csv")
@@ -27,47 +27,50 @@ jerc_in <- read.csv("C:/Users/cflagg/Documents/GitHub/pythonWork/pls/jerc_n_ref.
 # merge the data sets
 ref_dat <- plyr::rbind.fill(osbs_in, jerc_in)
 
+# remove stems with no reflectance data
+ref_dat <- ref_dat[c(-13:-15,-19),]
+
 ## WES ANDERSON COLOR PALETTE
 ```
 
 ```{r}
-wavelength <- round(wavelengths[,2]*1000) # wavelengths captured by machine
-reflectance <- ref_dat[,c(3:428)] # reflectance values 
+# bring in wavelengths
+wave <- 1000*wavelengths_df[,2] # from data frame to vector
+wave <- wave[c(-190:-210, -284:-315,-420:-426)] # this is now a vector
 
+# bring in reflectance data
+reflectance <- ref_dat[,c(3:428)] # get all reflectance
+reflectance <- reflectance[,c(-190:-210, -284:-315,-420:-426)]# now subset out water
+ 
 # need to setup the x-axis, the wavelengths, and a transpose of the reflectance matrix with t()
-reflectance.plot = matplot(x = wavelength, y = t(reflectance/10000),lty=1,xlab="wavelengths(nm)",ylab="Raw DN",type="l", main = "Raw DN by Stem | Site", col = ref_dat$siteID)
+reflectance.plot = matplot(x = wave, y = t(reflectance/10000),lty=1,xlab="wavelengths(nm)",ylab="Reflectance",type="l", main = "Reflectance by Stem | Site (water absorption removed)", col = ref_dat$siteID)
 
-# dump the water absorption bands
-matplot(x = wavelength, y = t(reflectance[2,]), type = "l")
-waterLine <- data.frame(wavelength = wavelength, ref = c(t(reflectance[2,])))
-waterLine$reflectance <- ifelse(waterLine$ref > 6000, NA, waterLine$ref)
-matplot(x = waterLine$wavelength, y= waterLine$reflectance, type = "l")
-
-filter(waterLine, ref > 6000)
-
-# Fill array with NA's, or remove the columns all together?
-# 1354 - 1414 nm
-# 1815 - 1930 nm
-# 2511 nm
-```
-
-
-## Initial PLS
-```{r}
 # x/predictor cannot be a data frame, it has to be a matrix 
 # why this is the case: http://r.789695.n4.nabble.com/Error-invalid-type-list-for-variable-when-using-lm-td3045462.html
 # no soil data
 refl = as.matrix(reflectance/10000)
-log_refl = log(1/refl)
+log_refl = log(1/refl)+1
+log_refl = ifelse(log_refl == Inf, 1, log_refl)
+
+matplot(wave, t(log_refl), type = "l")
+```
+
+
+## Initial PLS - raw and log-transformed (log(1/Reflectance))
+```{r}
+
+# log_refl <- log_refl[log_refl > 0] # how to subset the matrix 
 pls1 <- plsr(total_n ~ refl, data = ref_dat, ncomp = 10, validation = "LOO")
+pls1_log <- plsr(total_n ~ log_refl, data = ref_dat, ncomp = 10, validation = "LOO")
 
 rmse_plot = plot(RMSEP(pls1), legendpos = "topright", main = "LOO Validation Error")
+rmse_plot = plot(RMSEP(pls1_log), legendpos = "topright", main = "LOO Validation Error [log(1/R)]")
 # D
 ```
 
 ```{r}
 # prediction plot
-prediction.plot = plot(pls1, ncomp = 4, asp = 1, line = TRUE, ylim=c(0,1),xlim=c(0,1.2), main = "Obs. vs. Pred. - No Texture - 4 Components", ylab = "Predicted TSV", xlab = "Measured TSV")
+plot(pls1, ncomp = 10, asp = 1, line = TRUE, ylim=c(0.5,3),xlim=c(0.5,3), main = "Obs. vs. Pred. - Nitrogen - 10 Components", ylab = "Predicted N", xlab = "Measured N")
 ```
 
 \pagebreak
@@ -83,11 +86,10 @@ correlation.plot = plot(pls1, plottype = "scores", comps = 1:4, main = "Componen
 
 pl_methods = names(pls1)
 
-pls1$Yscores
+# pls1$Yscores
 pls1$Yloadings
-glimpse(pls1$loadings)
-str(pls1$loadings)
-
+# glimpse(pls1$loadings)
+# str(pls1$loadings)
 ```
 
 ```{r}
@@ -95,26 +97,43 @@ str(pls1$loadings)
 barplot(explvar(pls1), axis.lty = 1, angle = 45, main = "% Variance Explained by Component", las = 2)
 
 # prediction of pls1 model against measured nitrogen
-pred1 <- predict(pls1, ncomp = 4, newdata = ref_dat)
+pred1 <- predict(pls1, ncomp = 10, newdata = ref_dat)
+pred1_log <- predict(pls1_log, ncomp = 10, newdata = ref_dat)
 
 # linear model of this
 predm1 <- lm(ref_dat$total_n ~ pred1)
 # summary of the model
 summary(predm1)
 
+# linear model of this
+predm1_log <- lm(ref_dat$total_n ~ pred1_log)
+# summary of the model
+summary(predm1_log)
+
 # plot it by siteID
-plot(pred1 ~ ref_dat$total_n, col = ref_dat$siteID, xlim = c(0,3), ylim = c(1, 2.5))
+plot(pred1 ~ ref_dat$total_n, col = ref_dat$siteID, xlim = c(0,3), ylim = c(0, 2.5))
+abline(0,1) # 1:1 line
+
+# plot it by siteID
+plot(pred1_log ~ ref_dat$total_n, col = ref_dat$siteID, xlim = c(0,3), ylim = c(0, 2.5))
 abline(0,1) # 1:1 line
 ```
 
+### PCA Loadings - all sites (OSBS, JERC)
 
 ```{r}
 par(mfrow=c(1,1))
-loadingplot(pls1, comps = 1:2, legendpos = "topright", labels = c(401:2500), xlab = "Wavelength (nm)")
+loadingplot(pls1, comps = 1:2, legendpos = "topright", labels = round(wave), xlab = "Wavelength (nm)")
 abline(h=0)
 
-loadingplot(pls1, comps = 3:4, legendpos = "topright", labels = c(401:2500), xlab = "Wavelength (nm)")
+loadingplot(pls1, comps = 3:4, legendpos = "topright", labels = round(wave), xlab = "Wavelength (nm)")
 abline(h=0)
+```
 
+### PLS R2 - all sites
+
+```{r}
+R2(pls1)
+R2(pls1_log)
 ```
 
