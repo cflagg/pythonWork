@@ -97,8 +97,8 @@ pls1$Yloadings
 barplot(explvar(pls1), axis.lty = 1, angle = 45, main = "% Variance Explained by Component", las = 2)
 
 # prediction of pls1 model against measured nitrogen
-pred1 <- predict(pls1, ncomp = 10, newdata = ref_dat)
-pred1_log <- predict(pls1_log, ncomp = 10, newdata = ref_dat)
+pred1 <- predict(pls1, ncomp = 8, newdata = ref_dat)
+pred1_log <- predict(pls1_log, ncomp = 8, newdata = ref_dat)
 
 # linear model of this
 predm1 <- lm(ref_dat$total_n ~ pred1)
