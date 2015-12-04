@@ -22,10 +22,13 @@ wavelengths_df <-read.csv("C:/Users/cflagg/Documents/GitHub/pythonWork/pls/wavel
 # read in data
 osbs_in <- read.csv("C:/Users/cflagg/Documents/GitHub/pythonWork/pls/osbs_n_ref.csv")
 jerc_in <- read.csv("C:/Users/cflagg/Documents/GitHub/pythonWork/pls/jerc_n_ref.csv")
-# sjer_in <- read.csv("C:/Users/cflagg/Documents/GitHub/pythonWork/pls/sjer_n_ref.csv")
+sjer_in <- read.csv("C:/Users/cflagg/Documents/GitHub/pythonWork/pls/sjer_n_ref.csv")
+
+# rename the SJER field names to match OSBS and JERC
+sjer_in <- rename(sjer_in, total_n = totalN, individual_id = individualID, total_c = totalC, pointID = Point)
 
 # merge the data sets
-ref_dat <- plyr::rbind.fill(osbs_in, jerc_in)
+ref_dat <- plyr::rbind.fill(osbs_in, jerc_in, sjer_in)
 
 # remove stems with no reflectance data
 ref_dat <- ref_dat[c(-13:-15,-19),]
@@ -97,26 +100,26 @@ pls1$Yloadings
 barplot(explvar(pls1), axis.lty = 1, angle = 45, main = "% Variance Explained by Component", las = 2)
 
 # prediction of pls1 model against measured nitrogen
-pred1 <- predict(pls1, ncomp = 8, newdata = ref_dat)
-pred1_log <- predict(pls1_log, ncomp = 8, newdata = ref_dat)
+pred1 <- predict(pls1, ncomp = 10, newdata = ref_dat)
+# pred1_log <- predict(pls1_log, ncomp = 8, newdata = ref_dat)
 
 # linear model of this
 predm1 <- lm(ref_dat$total_n ~ pred1)
 # summary of the model
 summary(predm1)
 
-# linear model of this
-predm1_log <- lm(ref_dat$total_n ~ pred1_log)
-# summary of the model
-summary(predm1_log)
+# # linear model of this
+# predm1_log <- lm(ref_dat$total_n ~ pred1_log)
+# # summary of the model
+# summary(predm1_log)
 
 # plot it by siteID
 plot(pred1 ~ ref_dat$total_n, col = ref_dat$siteID, xlim = c(0,3), ylim = c(0, 2.5))
 abline(0,1) # 1:1 line
 
-# plot it by siteID
-plot(pred1_log ~ ref_dat$total_n, col = ref_dat$siteID, xlim = c(0,3), ylim = c(0, 2.5))
-abline(0,1) # 1:1 line
+# # plot it by siteID
+# plot(pred1_log ~ ref_dat$total_n, col = ref_dat$siteID, xlim = c(0,3), ylim = c(0, 2.5))
+# abline(0,1) # 1:1 line
 ```
 
 ### PCA Loadings - all sites (OSBS, JERC)
@@ -127,6 +130,9 @@ loadingplot(pls1, comps = 1:2, legendpos = "topright", labels = round(wave), xla
 abline(h=0)
 
 loadingplot(pls1, comps = 3:4, legendpos = "topright", labels = round(wave), xlab = "Wavelength (nm)")
+abline(h=0)
+
+loadingplot(pls1, comps = 9:10, legendpos = "topright", labels = round(wave), xlab = "Wavelength (nm)")
 abline(h=0)
 ```
 
