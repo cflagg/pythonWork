@@ -7,7 +7,9 @@ output: html_document
 
 ```{r}
 # TO DO
-# CONVERT RAW DN TO REFLECTANCE -- MAX DN VALUE = 15000
+# figure outputs
+# http://stackoverflow.com/questions/22147594/export-graph-in-r-and-also-display-it-in-knitr
+
 ```
 
 ```{r}
@@ -16,6 +18,11 @@ library(pls)
 library(plyr)
 library(dplyr)
 library(reshape2)
+library(ggplot2)
+library(knitr)
+
+# this produces figures
+# opts_chunk$set(dev=c('png','postscript'))
 
 # wavelength file
 wavelengths_df <-read.csv("C:/Users/cflagg/Documents/GitHub/pythonWork/pls/wavelengths_um.csv")
@@ -37,7 +44,7 @@ ref_dat <- ref_dat[c(-13:-15,-19),]
 ## WES ANDERSON COLOR PALETTE
 ```
 
-```{r}
+```{r allref, dev="png"}
 # bring in wavelengths
 wave <- 1000*wavelengths_df[,2] # from data frame to vector
 wave <- wave[c(-190:-210, -284:-315,-420:-426)] # this is now a vector
@@ -55,12 +62,14 @@ log_refl = ifelse(log_refl == Inf, 1, log_refl)
  
 # need to setup the x-axis, the wavelengths, and a transpose of the reflectance matrix with t()
 reflectance.plot = matplot(x = wave, y = t(refl/10000),lty=1,xlab="wavelengths(nm)",ylab="Reflectance",type="l", main = "Reflectance by Stem | Site (water absorption removed)", col = ref_dat$site_id)
+```
 
+```{r fig.height=4, fig.width=8, fig.path="figures/logref"}
 matplot(wave, t(log_refl), type = "l",col = ref_dat$site_id)
 ```
 ## Spectral Averages per Site
 
-```{r}
+```{r fig.path="figures/avgRef"}
 # just take the site_id and the reflectance values
 avg_dat <- cbind(site_id = ref_dat[,"site_id"], reflectance)
 # melt
@@ -83,7 +92,7 @@ ggplot(melt2, aes(x = Wavelength, y = Reflectance/10000, col = site_id)) + geom_
 
 
 ## Initial PLS - raw and log-transformed (log(1/Reflectance))
-```{r}
+```{r fig.path="figures/rmse"}
 # log_refl <- log_refl[log_refl > 0] # how to subset the matrix 
 pls1 <- plsr(total_n ~ refl, data = ref_dat, ncomp = 10, validation = "LOO")
 pls1_log <- plsr(total_n ~ log_refl, data = ref_dat, ncomp = 10, validation = "LOO")
@@ -95,7 +104,7 @@ plot(RMSEP(pls1_cv), legendpos = "topright", main = "CV Validation Error")
 # D
 ```
 
-```{r}
+```{r fig.path="figures/predplot"}
 # prediction plot
 plot(pls1, ncomp = 1:9, asp = 1, line = TRUE, ylim=c(0.5,3),xlim=c(0.5,3), main = "Obs. vs. Pred. - Nitrogen - 10 Components", ylab = "Predicted N", xlab = "Measured N")
 ```
@@ -106,7 +115,7 @@ plot(pls1, ncomp = 1:9, asp = 1, line = TRUE, ylim=c(0.5,3),xlim=c(0.5,3), main 
 
 * These plots can be used to identify correlations among components. The procedure should produce mostly orthogonal components...
 
-```{r full-model corr plot, echo=FALSE, warning=FALSE}
+```{r full, echo=FALSE, warning=FALSE, fig.path="figures/corrplot"}
 #plot(pls1,plottype="correlation")
 correlation.plot = plot(pls1, plottype = "scores", comps = 1:9, main = "Component Correlation Plot")
 
@@ -121,29 +130,35 @@ pls1$Yloadings
 barplot(explvar(pls1), axis.lty = 1, angle = 45, main = "% Variance Explained by Component", las = 2)
 
 # prediction of pls1 model against measured nitrogen
-pred1 <- predict(pls1, ncomp = 10, newdata = ref_dat)
+pred1 <- predict(pls1, ncomp = 9, newdata = ref_dat)
 # pred1_log <- predict(pls1_log, ncomp = 8, newdata = ref_dat)
 
 # linear model of this
 predm1 <- lm(ref_dat$total_n ~ pred1)
 # summary of the model
 summary(predm1)
+```
 
+```{r fig.path="figures/modelfitplot"}
 # plot it by site_id
-plot(pred1 ~ ref_dat$total_n, col = ref_dat$site_id, xlim = c(0,3), ylim = c(0, 3))
+plot(ref_dat$total_n ~ pred1, col = ref_dat$site_id, xlim = c(0,3), ylim = c(0, 3))
 abline(0,1) # 1:1 line
 ```
 
 ### PCA Loadings - all sites (OSBS, JERC)
 
-```{r}
+```{r fig.path="figures/loading1"}
 par(mfrow=c(1,1))
 loadingplot(pls1, comps = 1:2, legendpos = "topright", labels = round(wave), xlab = "Wavelength (nm)")
 abline(h=0)
+```
 
+```{r fig.path="figures/loading2"}
 loadingplot(pls1, comps = 3:4, legendpos = "topright", labels = round(wave), xlab = "Wavelength (nm)")
 abline(h=0)
+```
 
+```{r fig.path="figures/loading3"}
 loadingplot(pls1, comps = 9:10, legendpos = "topright", labels = round(wave), xlab = "Wavelength (nm)")
 abline(h=0)
 ```
