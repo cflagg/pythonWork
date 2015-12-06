@@ -87,12 +87,12 @@ SJER_n <- merge(SJER_n, center_SJER, by.x = "plot_id", by.y = "Plot_ID")
 # A.1 match up plot center (easting, northing) with a stemID center based on plotID and pointID
 # filter rows with Nitrogen data only and point_id == 41 (plot center only)
 SJER_n <- SJER_n %>% filter(totalN > 0, pointid == "center") 
-
+ 
 # A.2 using the plot center coordinates, calculate the true coordinates of each stem
 # calculate x,y coordinates from distance and radians angle -- simply add the plot center coordinates (pointID) to calc new coords
-# # these coordinates represent the positions of sampled individuals across ALL PLOTS
-# SJER_n$utm_e = with(SJER_n, individualdistance*sin(radians(individualazimuth)) + easting)
-# SJER_n$utm_n = with(SJER_n, individualdistance*cos(radians(individualazimuth)) + northing)
+# these coordinates represent the positions of sampled individuals across ALL PLOTS
+SJER_n$utm_e = with(SJER_n, individualdistance*sin(radians(individualazimuth)) + easting.x)
+SJER_n$utm_n = with(SJER_n, individualdistance*cos(radians(individualazimuth)) + northing.x)
 
 # calculate the relative x,y coordinates of the stems (from the top-left corner)
 # feed it the averaged distances and azimuths
@@ -111,9 +111,9 @@ unique(SJER_n)
 # GRAB CANOPY DIMENSIONS TO INFORM SPECTRAL CLIPPING
 
 # store relevant data to pull spectra -- THIS IS A LOOKUP TABLE
-flData <- SJER_n %>% select(plot_id, pointid, individualID, rel_x, rel_y, totalN)
+flData <- SJER_n %>% dplyr::select(plot_id, pointid, individualID, rel_x, rel_y, totalN, easting.x, northing.x, utm_e, utm_n)
 
-flData %>% unique()
+# flData %>% unique()
 
 # B) Then bring in the H5 files and pull the spectra for each UTM coordinate -- these might have to be 'translated' as well
 head(flData)
@@ -132,16 +132,25 @@ for (plot in flData$plot_id){
   ff <-  paste(SJERFiledir, "/", plot,".h5" ,sep="")
   # pull the reflectance data for the specific plotid
   all_ref <- h5read(ff, "Reflectance")
+  sp_info <- h5read(ff,"plotBoundaries")
   # pass part of the data frame on to the next loop
   d <- flData[flData$plot_id == plot,] 
   # make sure the correct h5 file is being grabbed
-  print(paste(plot, ff))
+  # print(paste(plot, ff))
   # for each plotid, grab the individualID's relative coordinates
   for (stem in d$individualID){
     print(stem)
     # for each individual stem, pull the coordinate information
+    # browser()
     stemInfo <- d[which(d$individualID == stem),]
-    print(paste(stemInfo$rel_x, stemInfo$rel_y))
+    print(paste("plot bounds",sp_info))
+    print(paste("calculated stem utm coords",stemInfo$utm_e, stemInfo$utm_n))
+    print(paste("stem relative coords",stemInfo$rel_x, stemInfo$rel_y))
+    print(paste("field recorded utm coords",stemInfo$easting.x, stemInfo$northing.x))
+    # utm boundary coordinates = leftx, rightx, topy, bottomy 
+    st_plot_e <- round(abs(sp_info[1] - stemInfo$utm_e))
+    st_plot_n <- round(abs(sp_info[3] - stemInfo$utm_n))
+    print(paste("relative utm coords",st_plot_e, st_plot_n))
     # take the coordinates, slice the array, and store it
     # all_ref[stemInfo$rel_x, stemInfo$rel_y, 1:426] -- lists are indexed with double brackets "list[[]]"
     clip_ref[[stem]] <- all_ref[stemInfo$rel_x, stemInfo$rel_y, 1:426]

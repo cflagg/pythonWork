@@ -67,7 +67,7 @@ osbs_n <- merge(osbs_n, center_osbs, by.x = "plot_id", by.y = "plotID")
 osbs_n$utm_e = with(osbs_n, stem_distance*sin(radians(stem_azimuth)) + easting)
 osbs_n$utm_n = with(osbs_n, stem_distance*cos(radians(stem_azimuth)) + northing)
 
-# calculate the relative x,y coordinates of the stems (from the top-left corner)
+# calculate the relative x,y coordinates of the stems (from the  CENTER)
 # pointID 41 and plot center = (20, 20)
 osbs_n$rel_x = with(osbs_n, round(stem_distance*sin(radians(stem_azimuth)) + 20))
 osbs_n$rel_y = with(osbs_n, round(stem_distance*cos(radians(stem_azimuth)) + 20))
@@ -79,7 +79,7 @@ plot(osbs_n$rel_x, osbs_n$rel_y)
 # GRAB CANOPY DIMENSIONS TO INFORM SPECTRAL CLIPPING
 
 # store relevant data to pull spectra -- THIS IS A LOOKUP TABLE
-flData <- osbs_n %>% select(plotid, point_id, individual_id, utm_e,utm_n, rel_x, rel_y, total_n)
+flData <- osbs_n %>% dplyr::select(plotid, point_id, individual_id, utm_e,utm_n, rel_x, rel_y, total_n)
 
 # B) Then bring in the H5 files and pull the spectra for each UTM coordinate -- these might have to be 'translated' as well
 
@@ -97,6 +97,7 @@ for (plot in flData$plotid){
   ff <-  paste(osbsFiledir, "/", plot,".h5" ,sep="")
   # pull the reflectance data for the specific plotid
   all_ref <- h5read(ff, "Reflectance")
+  sp_info <- h5read(ff,"plotBoundaries")
   # pass part of the data frame on to the next loop
   d <- flData[flData$plotid == plot,] 
   # make sure the correct h5 file is being grabbed
@@ -106,10 +107,17 @@ for (plot in flData$plotid){
     print(stem)
     # for each individual stem, pull the coordinate information
     stemInfo <- d[which(d$individual_id == stem),]
-    print(paste(stemInfo$rel_x, stemInfo$rel_y))
+    print(paste("plot bounds",sp_info))
+    print(paste("stem utm coords",stemInfo$utm_e, stemInfo$utm_n))
+    print(paste("stem relative coords",stemInfo$rel_x, stemInfo$rel_y)) # this is calculated by the script
+    # utm boundary coordinates = leftx, rightx, topy, bottomy 
+    st_plot_e <- round(abs(sp_info[1] - stemInfo$utm_e))
+    st_plot_n <- round(abs(sp_info[3] - stemInfo$utm_n))
+    print(paste("relative utm coords",st_plot_e, st_plot_n)) # this is relative coordinate by differencing UTM coordinates for the corner of the plot versus the calculated UTM
     # take the coordinates, slice the array, and store it
     # all_ref[stemInfo$rel_x, stemInfo$rel_y, 1:426] -- lists are indexed with double brackets "list[[]]"
-    clip_ref[[stem]] <- all_ref[stemInfo$rel_x, stemInfo$rel_y, 1:426]
+    # clip_ref[[stem]] <- all_ref[stemInfo$rel_x, stemInfo$rel_y, 1:426] # are the relative coordinates correct, or rotated?
+    clip_ref[[stem]] <- all_ref[st_plot_e, st_plot_n, 1:426] # this is calculated by taking the diff between the top-left corner and the UTM coord of the stem
   }}
 
 # transform into data frame with wavelength data in each column
@@ -117,9 +125,9 @@ osbs_ref <- ldply(clip_ref)
 # reset the .id column
 colnames(osbs_ref)[1] <- "individual_id"
 
-# finally, rejoin with nitrogen and other data, based on individual_id
-osbs_out <- merge(osbs_ref, osbs_n, by = "individual_id")
-
-# write out the file
-write.csv(osbs_out, paste(outdir,"/osbs_n_ref.csv", sep=""))
+# # finally, rejoin with nitrogen and other data, based on individual_id
+# osbs_out <- merge(osbs_ref, osbs_n, by = "individual_id")
+# 
+# # write out the file
+# write.csv(osbs_out, paste(outdir,"/osbs_n_ref.csv", sep=""))
 
