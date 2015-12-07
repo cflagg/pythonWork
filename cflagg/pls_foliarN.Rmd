@@ -19,6 +19,9 @@ library(dplyr)
 library(reshape2)
 library(ggplot2)
 library(knitr)
+library(wesanderson)
+
+wescol <- wes_palette("Darjeeling")
 
 # this produces figures
 # opts_chunk$set(dev=c('png','postscript'))
@@ -87,6 +90,8 @@ melt2$wave <- rep(wave, 3) # add the wavelengths to the long format
 # plot it
 colnames(melt2) <-  c("waveID", "site_id", "Reflectance", "Wavelength")
 ggplot(melt2, aes(x = Wavelength, y = Reflectance/10000, col = site_id)) + geom_line(size=1.6) +theme_bw() +xlab("Wavelength (nm)")+ylab("Reflectance")
+
+mean(refl)
 ```
 
 
@@ -97,15 +102,15 @@ pls1 <- plsr(total_n ~ refl, data = ref_dat, ncomp = 10, validation = "LOO")
 pls1_log <- plsr(total_n ~ log_refl, data = ref_dat, ncomp = 10, validation = "LOO")
 pls1_cv <- plsr(total_n ~ refl, data = ref_dat, ncomp = 10, validation = "CV")
 
-plot(RMSEP(pls1), legendpos = "topright", main = "LOO Validation Error")
-plot(RMSEP(pls1_log), legendpos = "topright", main = "LOO Validation Error [log(1/R)]")
-plot(RMSEP(pls1_cv), legendpos = "topright", main = "CV Validation Error")
+# plot(RMSEP(pls1), legendpos = "topright", main = "LOO Validation Error")
+# plot(RMSEP(pls1_log), legendpos = "topright", main = "LOO Validation Error [log(1/R)]")
+plot(RMSEP(pls1_cv), legendpos = "topright", main = "CV Validation Error", lwd = 3, ylab = "RMSEP", xlab = "# of Components")
 # D
 ```
 
 ```{r fig.path="figures/predplot"}
 # prediction plot
-plot(pls1, ncomp = 1:9, asp = 1, line = TRUE, ylim=c(0.5,3),xlim=c(0.5,3), main = "Obs. vs. Pred. - Nitrogen - 10 Components", ylab = "Predicted N", xlab = "Measured N")
+plot(pls1_cv, ncomp = 1:9, asp = 1, line = TRUE, ylim=c(0.5,3),xlim=c(0.5,3), main = "Obs. vs. Pred. - Nitrogen - 9 Components", ylab = "Predicted N", xlab = "Measured N")
 ```
 
 \pagebreak
@@ -124,18 +129,22 @@ pls1$Yloadings
 # str(pls1$loadings)
 ```
 
-```{r}
+```{r predictionPlot, fig.path="figures/predictionPlot", dev="jpeg"}
 # explained variance
-barplot(explvar(pls1), axis.lty = 1, angle = 45, main = "% Variance Explained by Component", las = 2)
+# barplot(explvar(pls1), axis.lty = 1, angle = 45, main = "% Variance Explained by Component", las = 2)
 
 # prediction of pls1 model against measured nitrogen
-pred1 <- predict(pls1, ncomp = 9, newdata = ref_dat)
+pred1 <- predict(pls1_cv, ncomp = 9, newdata = ref_dat)
 # pred1_log <- predict(pls1_log, ncomp = 8, newdata = ref_dat)
 
 # linear model of this
 predm1 <- lm(ref_dat$total_n ~ pred1)
 # summary of the model
 summary(predm1)
+
+pred_data <- data.frame(pls_pred = pred1[1:134,,], foliarN = ref_dat$total_n,site_id = ref_dat$site_id)
+
+ggplot(pred_data, aes(pls_pred, foliarN, colour = site_id, shape = site_id)) + geom_point(size=3) + geom_abline(intercept = 0,slope = 1, size = 1.5) + annotate("text", x = 1, y = 2.35, label="R2 = 0.40", size = 12) + xlab("Predicted Stem Nitrogen(%)") + ylab("Measured Stem Nitrogen (%)") + ggtitle("Measured vs PLS Predicted Stem Nitrogen") + theme_bw()
 ```
 
 ```{r fig.path="figures/modelfitplot"}
@@ -148,7 +157,7 @@ abline(0,1) # 1:1 line
 
 ```{r fig.path="figures/loading1"}
 par(mfrow=c(1,1))
-loadingplot(pls1, comps = 1:2, legendpos = "topright", labels = round(wave), xlab = "Wavelength (nm)")
+loadingplot(pls1, comps = 1:3, legendpos = "topright", labels = round(wave), xlab = "Wavelength (nm)", col = wescol, lwd=3)
 abline(h=0)
 ```
 

@@ -6,3 +6,118 @@ output: html_document
 ---
 
 
+```{r}
+library(pls)
+library(plyr)
+library(dplyr)
+library(reshape2)
+library(ggplot2)
+library(knitr)
+library(wesanderson)
+library(stringr)
+
+wescol <- wes_palette("Darjeeling")
+
+# reference reflectance and field data
+osbs_v <- read.csv("C:/Users/cflagg/Documents/GitHub/pythonWork/pls/OSBS_2014_foliarChem_vegStr.csv")
+jerc_v <- read.csv("C:/Users/cflagg/Documents/GitHub/pythonWork/pls/JERC_2014_foliarChem_vegStr.csv")
+sjer_v <- read.csv("C:/Users/cflagg/Documents/GitHub/pythonWork/pls/SJER_2013_vegStr.csv")
+sjer_chem <- read.csv("C:/Users/cflagg/Documents/GitHub/pythonWork/pls/SJER_2013_foliarChem.csv")
+
+# rename the SJER field names to match OSBS and JERC  
+sjer_v <- dplyr::rename(sjer_v, individual_id = individualID, site_id = siteid)
+# vectorized list element extraction: http://stackoverflow.com/questions/2803460/how-to-get-the-second-sub-element-of-every-element-in-a-list-in-r
+sjer_v$genus <- sapply(str_split(sjer_v$scientificname,pattern = " "), "[[", 1)
+sjer_v$species <- sapply(str_split(sjer_v$scientificname,pattern = " "), "[[", 2)
+  
+sjer_chem <- dplyr::rename(sjer_chem, total_n = totalN, total_c = totalC, individual_id = individualID)
+
+# merge the data sets for veg structure analysis
+vst_dat <- plyr::rbind.fill(osbs_v, jerc_v, sjer_v)
+
+# merge the data sets for chemical analysis
+chem_dat <- plyr::rbind.fill(osbs_v, jerc_v, sjer_chem)
+
+# export plot list to join with spatial uncertainty data
+pilot_plots <- unique(vst_dat$plotid)
+
+```
+
+## Stem Height Distribution
+
+```{r stemheight_hist, fig.path="figures/stemheight"}
+# ggplot(small_df, aes(total_n), colours = site_id) + geom_density() 
+# ggplot(small_df, aes(fifteen_n, fill = site_id)) + geom_density(alpha = 0.2) + theme_bw() + xlab("% Nitrogen")+ ylab("Density")
+
+# select and filter data
+plot_dat <- dplyr::select(vst_dat, stemheight, site_id, total_n, total_c, mass_per_area, fifteen_n, thirteen_c, individual_id, taxonid, genus, species)
+plot_dat <- plot_dat %>% filter(site_id != "SOAP")
+
+# plot it
+ggplot(plot_dat, aes(x = stemheight, fill = site_id, linetype = site_id), colors = wes_col) + geom_density(aes(y=..scaled..),alpha=0.4, size=1.2) + theme_bw() + xlab("Stem Height (m)") + ylab("Density")+ ggtitle("Stem Height by Site")
+```
+
+
+```{r genus_plot,fig.path="figures/genusBar"}
+# grab the genus-level count per site
+genus_dat <- plot_dat
+genus_dat$genus <- ifelse(genus_dat$genus == "Pinus", "Pinus", ifelse(genus_dat$genus == "Quercus", "Quercus", "Other"))
+genus_dat <- ddply(genus_dat, ~site_id+genus, summarize, counts = length(species))
+
+# calculate total genus count per site_id, then calc proportion
+genus_dat <- ddply(genus_dat, ~site_id, mutate, total = sum(counts), proportion = counts/total)
+# plot
+ggplot(genus_dat, aes(x = factor(site_id), proportion, fill = genus),colors = wes_col) + geom_bar(stat="identity") + xlab("Site") + ylab("Proportion of Foliar Samples") + ggtitle("Foliar Samples by Plant Genus") + theme_bw()
+```
+
+```{r nitrogen_hist, fig.path="figures/nitrogen"}
+# Your y-axis is appropriately labeled - it is showing an approximate probability density curve for these data. A density curve can take on point values greater than one, but must be non-negative everywhere and the integral of the whole curve must be equal to one. Check out the Wikipedia article on probability density functions. If you need the y-axis to be less than one, try a histogram with geom_hist(). 
+
+# 
+
+# filter
+chem_dat <- chem_dat %>% dplyr::filter(site_id != "SOAP")
+
+# plot it
+ggplot(chem_dat, aes(x = total_n, fill = site_id, linetype = site_id), colors = wes_col) + geom_density(aes(y = ..scaled..),alpha=0.4, size=1.2) + theme_bw() + xlab("% Nitrogen") + ylab("Probability Density (scaled to 1)") + ggtitle("Nitrogen Content by Site") 
+```
+
+```{r carbon_hist, fig.path="figures/nitrogen"}
+
+# plot it
+ggplot(chem_dat, aes(x = total_c, fill = site_id, linetype = site_id), colors = wes_col) + geom_density(alpha=0.4, size=1.2) + theme_bw() + xlab("% Carbon") + ylab("Probability Density (scaled to 1)") + ggtitle("Carbon Content by Site")
+```
+
+## NDNI
+
+```{r jerc_ndni, fig.path="figures/jerc_ndni"}
+# filthy, dirty hacks because I can't stand exporting python data frames
+jerc_ndni <- data.frame(ndni = c(0.03754575,  0.03519801,  0.04912998,  0.03887176,  0.03253981, 0.0326455 ,  0.03581944,  0.03742074,  0.03499109,  0.0376712 ,0.03721697,  0.0323614 ,  0.04175081,  0.03785565,  0.03803404,0.04341954,  0.04212729),
+avgN = c(1.77887753,  1.3581499 ,  1.7286327 ,  1.6058137 ,  1.61899053,1.4614277 ,  1.6298325 ,  1.55414365,  1.52968035,  1.28296597,1.6493719 ,  2.1887554 ,  1.71025765,  1.33459525,  1.33841715,1.5472149 ,  1.4920822))
+
+
+sjer_ndni <- data.frame(ndni = c(0.02825255,  0.02637586,  0.02861672,  0.02626527,  0.02781514,0.02918678,  0.02768804,  0.02524401,  0.03097983,  0.02594361,0.02964788,  0.02690855,  0.02810072,  0.02827542,  0.02695483),
+avgN = c( 1.46363636,  1.375     ,  1.6375    ,  1.875     ,  1.87142857,1.32      ,  1.2125    ,  1.33333333,  1.4       ,  1.9       , 1.38      ,  1.6       ,  1.51666667,  1.24      ,  2.2))
+
+
+osbs_ndni <- data.frame(ndni = c(0.05222636,  0.0351661 ,  0.05479124,  0.02884115,  0.03701876,
+        0.03024197,  0.02942744,  0.03135579,  0.05079166,  0.05390827,
+        0.04851301,  0.02664353,  0.03087197,  0.03859087,  0.03379546,
+        0.03247082,  0.03232074,  0.02887205,  0.04684527), avgN = c(1.8511326 ,  0.7318521 ,  1.31530557,  1.05164845,  1.68218235,1.0794374 ,  1.1535965 ,  0.6706812 ,  2.107867  ,  1.532048  ,1.10755733,  1.32534795,  1.92002763,  1.5034832 ,  0.6828276 ,0.8406297 ,  0.96103   ,  0.8184837 ,  0.9669018 ))
+
+ggplot(jerc_ndni, aes(ndni, avgN)) + geom_point(size=3.5) + theme_bw() + stat_smooth(method = "lm", size =2, alpha = 0.3) + annotate("text", x = c(0.045, 0.045), y = c(2,1.9), label = c("R2 = 0.0", "p = 0.85"), size = 12) + xlab("Average NDNI per plot") + ylab("Average %N per plot") + ggtitle("NDNI vs. Foliar N: JERC")
+```
+
+```{r sjer_ndni, fig.path="figures/sjer_ndni"}
+ggplot(sjer_ndni, aes(ndni, avgN)) + geom_point(size=3.5) + theme_bw() + stat_smooth(method = "lm", size =2, alpha = 0.3) + annotate("text", x = c(0.03, 0.03), y = c(2,1.9), label = c("R2 = 0.12","p = 0.21"), size = 12) + xlab("Average NDNI per plot") + ylab("Average %N per plot") + ggtitle("NDNI vs. Foliar N: SJER")
+
+```
+
+```{r osbs_ndni, fig.path="figures/osbs_ndni"}
+ggplot(osbs_ndni, aes(ndni, avgN)) + geom_point(size=3.5) + theme_bw() + stat_smooth(method = "lm", size =2, alpha = 0.3) + annotate("text", x = c(0.045,0.045), y = c(1.8,1.70), label = c("R2 = 0.21", "p = 0.05"), size = 12) + xlab("Average NDNI per plot") + ylab("Average %N per plot") + ggtitle("NDNI vs. Foliar N: OSBS")
+
+```
+
+
+
+

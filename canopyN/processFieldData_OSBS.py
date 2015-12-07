@@ -65,7 +65,19 @@ os.getcwd()
 #Identify the Site you wish to query data for
 site='OSBS'
 
+#Define Field Data Path
+plotH5FilePath= basePath + '/data/h5/'
+#fieldDataPath='F:/D17_Data_2014_Distro/06_Field_Data/Sampling_Data/D17_Foliar_Chemistry/'
 
+fieldDataPath=basePath + '/fieldData/'
+
+# Pickle location for NDNI data
+ndniPicklePath = basePath + "/data/processed/ndni_pickles/"
+
+##################### Pickle Things ##################################
+
+# load the pickle -- again, defaults to working dir
+NDNI = pickle.load(open(ndniPicklePath+ "NDNI_OSBS.p", "rb"))
 ###################### Define Paths ##################################
 
 #Define Field Data Path
