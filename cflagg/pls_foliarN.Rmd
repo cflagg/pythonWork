@@ -9,7 +9,6 @@ output: html_document
 # TO DO
 # figure outputs
 # http://stackoverflow.com/questions/22147594/export-graph-in-r-and-also-display-it-in-knitr
-
 ```
 
 ```{r}
