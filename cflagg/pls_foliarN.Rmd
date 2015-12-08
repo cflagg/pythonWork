@@ -23,8 +23,9 @@ library(wesanderson)
 
 wescol <- wes_palette("Darjeeling")
 
-# this produces figures
-# opts_chunk$set(dev=c('png','postscript'))
+# this produces figures and other global chunk options
+opts_chunk$set(dev=c('jpeg','postscript'), warning=FALSE, message=FALSE)
+# opts_chunk$set(dev=c('jpeg','postscript'), warning=FALSE, message=FALSE, fig.path="figures/")
 
 # wavelength file
 wavelengths_df <-read.csv("C:/Users/cflagg/Documents/GitHub/pythonWork/pls/wavelengths_um.csv")
@@ -64,6 +65,14 @@ log_refl = ifelse(log_refl == Inf, 1, log_refl)
  
 # need to setup the x-axis, the wavelengths, and a transpose of the reflectance matrix with t()
 reflectance.plot = matplot(x = wave, y = t(refl/10000),lty=1,xlab="wavelengths(nm)",ylab="Reflectance",type="l", main = "Reflectance by Stem | Site (water absorption removed)", col = ref_dat$site_id)
+```
+
+## Mean Reflectance Patterns
+
+```{r}
+mean_refl <- rowMeans(refl)
+
+min(mean_refl);max(mean_refl);mean(mean_refl); median(mean_refl)
 ```
 
 ```{r fig.height=4, fig.width=8, fig.path="figures/logref"}

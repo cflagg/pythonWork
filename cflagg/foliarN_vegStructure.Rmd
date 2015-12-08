@@ -90,34 +90,49 @@ ggplot(chem_dat, aes(x = total_c, fill = site_id, linetype = site_id), colors = 
 
 ## NDNI
 
-```{r jerc_ndni, fig.path="figures/jerc_ndni"}
+```{r jerc_ndni, fig.path="figures/jerc_ndni", dev = "jpeg"}
 # filthy, dirty hacks because I can't stand exporting python data frames
 jerc_ndni <- data.frame(ndni = c(0.03754575,  0.03519801,  0.04912998,  0.03887176,  0.03253981, 0.0326455 ,  0.03581944,  0.03742074,  0.03499109,  0.0376712 ,0.03721697,  0.0323614 ,  0.04175081,  0.03785565,  0.03803404,0.04341954,  0.04212729),
-avgN = c(1.77887753,  1.3581499 ,  1.7286327 ,  1.6058137 ,  1.61899053,1.4614277 ,  1.6298325 ,  1.55414365,  1.52968035,  1.28296597,1.6493719 ,  2.1887554 ,  1.71025765,  1.33459525,  1.33841715,1.5472149 ,  1.4920822))
+avgN = c(1.77887753,  1.3581499 ,  1.7286327 ,  1.6058137 ,  1.61899053,1.4614277 ,  1.6298325 ,  1.55414365,  1.52968035,  1.28296597,1.6493719 ,  2.1887554 ,  1.71025765,  1.33459525,  1.33841715,1.5472149 ,  1.4920822), site_id = rep("JERC", 17))
 
 
 sjer_ndni <- data.frame(ndni = c(0.02825255,  0.02637586,  0.02861672,  0.02626527,  0.02781514,0.02918678,  0.02768804,  0.02524401,  0.03097983,  0.02594361,0.02964788,  0.02690855,  0.02810072,  0.02827542,  0.02695483),
-avgN = c( 1.46363636,  1.375     ,  1.6375    ,  1.875     ,  1.87142857,1.32      ,  1.2125    ,  1.33333333,  1.4       ,  1.9       , 1.38      ,  1.6       ,  1.51666667,  1.24      ,  2.2))
+avgN = c( 1.46363636,  1.375     ,  1.6375    ,  1.875     ,  1.87142857,1.32      ,  1.2125    ,  1.33333333,  1.4       ,  1.9       , 1.38      ,  1.6       ,  1.51666667,  1.24      ,  2.2), site_id = rep("SJER", 15))
 
 
 osbs_ndni <- data.frame(ndni = c(0.05222636,  0.0351661 ,  0.05479124,  0.02884115,  0.03701876,
         0.03024197,  0.02942744,  0.03135579,  0.05079166,  0.05390827,
         0.04851301,  0.02664353,  0.03087197,  0.03859087,  0.03379546,
-        0.03247082,  0.03232074,  0.02887205,  0.04684527), avgN = c(1.8511326 ,  0.7318521 ,  1.31530557,  1.05164845,  1.68218235,1.0794374 ,  1.1535965 ,  0.6706812 ,  2.107867  ,  1.532048  ,1.10755733,  1.32534795,  1.92002763,  1.5034832 ,  0.6828276 ,0.8406297 ,  0.96103   ,  0.8184837 ,  0.9669018 ))
+        0.03247082,  0.03232074,  0.02887205,  0.04684527), avgN = c(1.8511326 ,  0.7318521 ,  1.31530557,  1.05164845,  1.68218235,1.0794374 ,  1.1535965 ,  0.6706812 ,  2.107867  ,  1.532048  ,1.10755733,  1.32534795,  1.92002763,  1.5034832 ,  0.6828276 ,0.8406297 ,  0.96103   ,  0.8184837 ,  0.9669018 ), site_id = rep("OSBS", 19))
 
-ggplot(jerc_ndni, aes(ndni, avgN)) + geom_point(size=3.5) + theme_bw() + stat_smooth(method = "lm", size =2, alpha = 0.3) + annotate("text", x = c(0.045, 0.045), y = c(2,1.9), label = c("R2 = 0.0", "p = 0.85"), size = 12) + xlab("Average NDNI per plot") + ylab("Average %N per plot") + ggtitle("NDNI vs. Foliar N: JERC")
+ggplot(jerc_ndni, aes(ndni, avgN)) + geom_point(size=3.5) + theme_bw() + stat_smooth(method = "lm", size =2, alpha = 0.3) + annotate("text", x = c(0.045, 0.045), y = c(2,1.9), label = c("R2 = 0.0", "p = 0.85"), size = 10) + xlab("Average NDNI per plot") + ylab("Average %N per plot") + ggtitle("NDNI vs. Foliar N: JERC")
 ```
 
-```{r sjer_ndni, fig.path="figures/sjer_ndni"}
-ggplot(sjer_ndni, aes(ndni, avgN)) + geom_point(size=3.5) + theme_bw() + stat_smooth(method = "lm", size =2, alpha = 0.3) + annotate("text", x = c(0.03, 0.03), y = c(2,1.9), label = c("R2 = 0.12","p = 0.21"), size = 12) + xlab("Average NDNI per plot") + ylab("Average %N per plot") + ggtitle("NDNI vs. Foliar N: SJER")
-
-```
-
-```{r osbs_ndni, fig.path="figures/osbs_ndni"}
-ggplot(osbs_ndni, aes(ndni, avgN)) + geom_point(size=3.5) + theme_bw() + stat_smooth(method = "lm", size =2, alpha = 0.3) + annotate("text", x = c(0.045,0.045), y = c(1.8,1.70), label = c("R2 = 0.21", "p = 0.05"), size = 12) + xlab("Average NDNI per plot") + ylab("Average %N per plot") + ggtitle("NDNI vs. Foliar N: OSBS")
+```{r sjer_ndni, fig.path="figures/sjer_ndni", dev = "jpeg"}
+ggplot(sjer_ndni, aes(ndni, avgN)) + geom_point(size=3.5) + theme_bw() + stat_smooth(method = "lm", size =2, alpha = 0.3) + annotate("text", x = c(0.03, 0.03), y = c(2,1.85), label = c("R2 = 0.12","p = 0.21"), size = 10) + xlab("Average NDNI per plot") + ylab("Average %N per plot") + ggtitle("NDNI vs. Foliar N: SJER")
 
 ```
 
+```{r osbs_ndni, fig.path="figures/osbs_ndni", dev = "jpeg"}
+ggplot(osbs_ndni, aes(ndni, avgN)) + geom_point(size=3.5) + theme_bw() + stat_smooth(method = "lm", size =2, alpha = 0.3) + annotate("text", x = c(0.045,0.045), y = c(1.8,1.65), label = c("R2 = 0.21", "p = 0.05"), size = 10) + xlab("Average NDNI per plot") + ylab("Average %N per plot") + ggtitle("NDNI vs. Foliar N: OSBS")
+
+```
+
+## Combined NDNI Data
+
+```{r}
+
+ndni_dat <- plyr::rbind.fill(osbs_ndni, sjer_ndni, jerc_ndni)
+
+# putting "colour = site_id" into ggplot(aes()) will result in 3 groups for 3 linear models -- putting it in geom_point(aes()) results in just modifying the color scheme of the points (1 linear model with all points combined)
+ggplot(ndni_dat, aes(ndni, avgN)) + geom_point(size=4, aes(colour = site_id)) + stat_smooth(method = "lm", formula = y ~ x)
+
+# plot all 3 models - colors retained
+ggplot(ndni_dat, aes(ndni, avgN,colour = site_id)) + geom_point(size=4) + stat_smooth(method = "lm", formula = y ~ x)
+
+# this does nothing
+ggplot(ndni_dat, aes(ndni, avgN), colour = site_id) + geom_point(size=4) + stat_smooth(method = "lm", formula = y ~ x)
+```
 
 
 
