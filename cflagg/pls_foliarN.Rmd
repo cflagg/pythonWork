@@ -187,3 +187,21 @@ R2(pls1)
 R2(pls1_log)
 ```
 
+reflectance <- ref_dat[,c(3:428)] # get all reflectance
+reflectance <- reflectance[,c(-190:-210, -284:-315,-420:-426)]# now subset out water absorption bands
+
+# x/predictor cannot be a data frame, it has to be a matrix 
+refl = as.matrix(reflectance/10000)
+
+```{r}
+for (site in unique(ref_dat$site_id)){
+  reflectance <- ref_dat[ref_dat$site_id == site,c(3:428)]
+  reflectance <- reflectance[,c(-190:-210, -284:-315,-420:-426)]
+  refl <- as.matrix(reflectance)
+  dat <- ref_dat[ref_dat$site_id == site,]
+  pls_out <- plsr(total_n ~ refl, data = dat, ncomp = 10, validation = "CV")
+  # prediction plot
+  plot(pls_out, ncomp = 9, asp = 1, line = TRUE, ylim=c(0.5,3),xlim=c(0.5,3), main = site, ylab = "Predicted N", xlab = "Measured N")
+  print(summary(lm(predict(pls_out, ncomp = 9, newdata = dat) ~ total_n, data = dat)));print(site)
+}
+```
