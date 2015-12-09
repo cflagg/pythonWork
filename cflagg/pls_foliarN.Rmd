@@ -202,6 +202,11 @@ for (site in unique(ref_dat$site_id)){
   pls_out <- plsr(total_n ~ refl, data = dat, ncomp = 10, validation = "CV")
   # prediction plot
   plot(pls_out, ncomp = 9, asp = 1, line = TRUE, ylim=c(0.5,3),xlim=c(0.5,3), main = site, ylab = "Predicted N", xlab = "Measured N")
+  loadingplot(pls_out, comps = 1:3, legendpos = "topright", labels = round(wave), xlab = "Wavelength (nm)", col = wescol, lwd=3, main = site)
+  abline(h=0)
+  abline(v=1510)
+  abline(v=1680)
   print(summary(lm(predict(pls_out, ncomp = 9, newdata = dat) ~ total_n, data = dat)));print(site)
+  print(R2(pls_out))
 }
 ```
