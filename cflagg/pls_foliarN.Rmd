@@ -98,7 +98,7 @@ melt2 <- filter(melt2, variable != "wavelength")
 melt2$wave <- rep(wave, 3) # add the wavelengths to the long format
 # plot it
 colnames(melt2) <-  c("waveID", "site_id", "Reflectance", "Wavelength")
-ggplot(melt2, aes(x = Wavelength, y = Reflectance/10000, col = site_id)) + geom_line(size=1.6) +theme_bw() +xlab("Wavelength (nm)")+ylab("Reflectance")
+ggplot(melt2, aes(x = Wavelength, y = Reflectance/10000, col = site_id)) + geom_line(size=1.6) +theme_bw() +xlab("Wavelength (nm)")+ylab("Reflectance") + geom_vline(xintercept = c(1510, 1680), size = 3, alpha = 0.75, color = "grey")
 
 mean(refl)
 ```
@@ -187,11 +187,7 @@ R2(pls1)
 R2(pls1_log)
 ```
 
-reflectance <- ref_dat[,c(3:428)] # get all reflectance
-reflectance <- reflectance[,c(-190:-210, -284:-315,-420:-426)]# now subset out water absorption bands
 
-# x/predictor cannot be a data frame, it has to be a matrix 
-refl = as.matrix(reflectance/10000)
 
 ```{r}
 for (site in unique(ref_dat$site_id)){
