@@ -1,5 +1,12 @@
 # pythonWork
-This repository centers around (1) extracting, processing, and geo-locating AOP data with field-collected Foliar Nitrogen data and (2) wrangling and visualizing the extracted data for the D03 (2014) and D17 (2013) prototypes
+
+This repository centers around (1) extracting, processing, and geo-locating AOP data with field-collected Foliar Nitrogen data and (2) wrangling and visualizing the extracted data for the D03 (2014) and D17 (2013) prototypes. 
+
+# Analytical Goals
+
+The analysis is currently divided into two main pieces: (1) Analyzing plot-scale (i.e. all bright pixels averaged) NDNI vs. Foliar Nitrogen across sites, and (2) Analyzing single-stem-scale spectra (i.e. a single pixel, VIS - NIR wavelengths) vs. Foliar N across sites (this is the PLS analysis). 
+
+# Workflow Process
 
 Below is an abstraction of the workflow for my 2015 AGU poster. Airborne data extraction scripting file workflow (where "[]" indicates a folder/file and "{}" indicates an input/output):
 
